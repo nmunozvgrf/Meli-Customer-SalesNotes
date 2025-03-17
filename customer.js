@@ -36,7 +36,7 @@ async function obtenerClientes() {
 
       const fechaCreacion = data.registration_date ? data.registration_date.split('T')[0] : "Fecha NO Disponible";
       const Datos = {
-        Rut: data.identification?.number || 'Sin Rut',
+        Rut: (data.identification?.number || 'Sin Rut').replace(/-/g, ''), 
         Nombre: data.nickname || 'Sin Nombre',
         Direccion: data.address?.address || 'Sin Dirección',
         Ciudad: data.address?.city || 'Sin Ciudad',
