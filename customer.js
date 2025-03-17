@@ -94,11 +94,11 @@ function createCustomer(Datos) {
   if (!salidaCrear || salidaCrear.code !== 0) {
     console.error('Error: Creación fallida.');
     console.error('Salida del script:', salidaCrear.stderr || salidaCrear.stdout);
-    shell.exit(1);
+    return false;
   }
 
-  console.log(`Cliente ${Datos.Rut} creado y guardado en create_customer.sh`);
-  
+  console.log(`Cliente ${Datos.Rut} creado correctamente.`);
+  return true;
 }
 
 module.exports = { obtenerClientes, isValidCustomer, createCustomer };

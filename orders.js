@@ -21,8 +21,6 @@ async function obtenerPedidos() {
     const Pedidos = data.results
       .filter((pedido) => pedido.status === "paid")
       .map(order => ({
-        Id_Comprador: order.buyer?.id || "Sin ID Comprador",
-        Fecha_Compra: order.date_created || "Sin Fecha",
         Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
