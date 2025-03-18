@@ -57,7 +57,9 @@ async function obtenerClientes() {
     try {
       const { data } = await axios.get(url, { headers });
 
-      const fechaCreacion = data.registration_date ? data.registration_date.split('T')[0] : "Fecha NO Disponible";
+      const fechaCreacion = data.registration_date? data.registration_date.split('T')[0].split('-').reverse().join(''): "Fecha NO Disponible";
+
+
       const Datos = {
         Rut: (data.identification?.number || 'Sin Rut').replace(/-/g, ''), 
         Nombre: changeText(data.nickname || 'Sin Nombre'),
@@ -114,7 +116,7 @@ function createCustomer(Datos) {
   
   const emailFormatted = Datos.Email.replace(/ /g, "%20");
 
-  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${emailFormatted }"`;
+  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${emailFormatted}"`;
 
   // Mensaje en la terminal antes de ejecutar el script
   console.log(" Verificando creación del cliente...");
@@ -134,10 +136,10 @@ function createCustomer(Datos) {
     Numero2: numero2,
     Numero3: numero3,
     Numero4: numero4,
-    Email: emailFormateado
+    Email: emailFormatted ,
   }, null, 2));
 
-  
+
   let salidaCrear = shell.exec(comandoCrear, { silent: true });
   if (!salidaCrear || salidaCrear.code !== 0) {
     console.error('Error: Creación fallida.');
