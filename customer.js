@@ -30,7 +30,8 @@ function validEmail(email){
   if (!email || typeof email !== "string" || !email.includes ("@")){
     return "email_invalido@dominio.com"
   }
-  return email.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim())? email.trim(): "email_invalido@dominio.com";
 }
 
 async function obtenerClientes() {
@@ -66,7 +67,7 @@ async function obtenerClientes() {
         Direccion: changeText(data.address?.address || 'Sin Dirección'),
         Ciudad: changeText(data.address?.city || 'Sin Ciudad'),
         Comuna: changeText(data.address?.state || 'Sin Comuna'),
-        Email:  validEmail(data.email),
+        Email:  validEmail(data.email || 'Sin Email'),
         Fecha_Creacion: fechaCreacion,
         Telefono: data.phone?.number || 'Sin Teléfono',
       };
@@ -113,10 +114,10 @@ function isValidCustomer(rut) {
 
 //Crea el usuario
 function createCustomer(Datos) {
-  
-  const emailFormatted = Datos.Email.replace(/ /g, "%20");
 
-  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${emailFormatted}"`;
+  Email = validEmail(Datos.Email);
+  
+  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${Email}"`;
 
   // Mensaje en la terminal antes de ejecutar el script
   console.log(" Verificando creación del cliente...");
@@ -136,7 +137,7 @@ function createCustomer(Datos) {
     Numero2: numero2,
     Numero3: numero3,
     Numero4: numero4,
-    Email: emailFormatted ,
+    Email: Email,
   }, null, 2));
 
 
