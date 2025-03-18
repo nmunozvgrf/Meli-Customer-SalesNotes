@@ -104,7 +104,7 @@ function isValidCustomer(rut) {
 //Crea el usuario
 function createCustomer(Datos) {
   
-  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}"|"${Datos.Nombre}"|"${Datos.Direccion}"|"${Datos.Comuna}"|"${Datos.Ciudad}"|"${giro}"|"${Datos.Telefono}"|"${Datos.Telefono}"|"${Datos.Telefono}"|"${Datos.Nombre}"|"${tipo_Usuario}"|"${Datos.Fecha_Creacion}"|"${Datos.Fecha_Creacion}"|"${numero1}"|"${numero2}"|"${numero3}"|"${numero4}"|"${Datos.Telefono}"|"${Datos.Email}"`;
+  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${Datos.Email}"`;
 
   let salidaCrear = shell.exec(comandoCrear, { silent: true });
   if (!salidaCrear || salidaCrear.code !== 0) {
