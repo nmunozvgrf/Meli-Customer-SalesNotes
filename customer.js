@@ -4,12 +4,13 @@ const shell = require('shelljs');
 const { obtenerTokenComprador, obtenerUserIdComprador } = require("./token");
 const { channel } = require('diagnostics_channel');
 
-const tipo_Usuario = 'Meli';
-const giro = 'Aa';
+const tipo_Usuario = 'MM';
+const giro = 'PA';
 const numero1 = '0';
 const numero2 = '0';
 const numero3 = '1';
 const numero4 = '0';
+
 
 
 // Reemplazo para convertir a mayúsculas y normalizar
@@ -23,6 +24,13 @@ function changeText(texto){
               .replace("Ú","U")
               .replace("Ñ","N")
               .replace(" ","%20");
+}
+
+function validEmail(email){
+  if (!email || typeof email !== "string" || !email.includes ("@")){
+    return "email_invalido@dominio.com"
+  }
+  return email.trim();
 }
 
 async function obtenerClientes() {
@@ -56,7 +64,7 @@ async function obtenerClientes() {
         Direccion: changeText(data.address?.address || 'Sin Dirección'),
         Ciudad: changeText(data.address?.city || 'Sin Ciudad'),
         Comuna: changeText(data.address?.state || 'Sin Comuna'),
-        Email: data.email || 'Sin Email',
+        Email:  validEmail(data.email),
         Fecha_Creacion: fechaCreacion,
         Telefono: data.phone?.number || 'Sin Teléfono',
       };
@@ -104,7 +112,9 @@ function isValidCustomer(rut) {
 //Crea el usuario
 function createCustomer(Datos) {
   
-  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${Datos.Email}"`;
+  const emailFormatted = Datos.Email.replace(/ /g, "%20");
+
+  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${emailFormatted }"`;
 
   let salidaCrear = shell.exec(comandoCrear, { silent: true });
   if (!salidaCrear || salidaCrear.code !== 0) {
