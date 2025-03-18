@@ -87,7 +87,7 @@ function isValidCustomer(rut) {
     return null;
   }
 
-  const comandoValidar = `./data/valid_customer.sh ${rut}`;
+  const comandoValidar = `sh /data/valid_customer.sh ${rut}`;
   let salidaValidar = shell.exec(comandoValidar, { silent: true });
 
   if (!salidaValidar || salidaValidar.code !== 0) {
