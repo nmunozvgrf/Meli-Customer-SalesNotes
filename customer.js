@@ -2,6 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const shell = require('shelljs');
 const { obtenerTokenComprador, obtenerUserIdComprador } = require("./token");
+const { channel } = require('diagnostics_channel');
 
 const tipo_Usuario = 'Meli';
 const giro = 'Aa';
@@ -9,6 +10,20 @@ const numero1 = '0';
 const numero2 = '0';
 const numero3 = '1';
 const numero4 = '0';
+
+
+// Reemplazo para convertir a mayúsculas y normalizar
+function changeText(texto){
+  if (!texto) return "Sin Datos";
+  return texto.toUpperCase()
+              .replace("Á","A")
+              .replace("É","E")
+              .replace("Í","I")
+              .replace("Ó","O")
+              .replace("Ú","U")
+              .replace("Ñ","N")
+              .replace(" ","%20");
+}
 
 async function obtenerClientes() {
   try {
@@ -37,10 +52,10 @@ async function obtenerClientes() {
       const fechaCreacion = data.registration_date ? data.registration_date.split('T')[0] : "Fecha NO Disponible";
       const Datos = {
         Rut: (data.identification?.number || 'Sin Rut').replace(/-/g, ''), 
-        Nombre: data.nickname || 'Sin Nombre',
-        Direccion: data.address?.address || 'Sin Dirección',
-        Ciudad: data.address?.city || 'Sin Ciudad',
-        Comuna: data.address?.state || 'Sin Comuna',
+        Nombre: changeText(data.nickname || 'Sin Nombre'),
+        Direccion: changeText(data.address?.address || 'Sin Dirección'),
+        Ciudad: changeText(data.address?.city || 'Sin Ciudad'),
+        Comuna: changeText(data.address?.state || 'Sin Comuna'),
         Email: data.email || 'Sin Email',
         Fecha_Creacion: fechaCreacion,
         Telefono: data.phone?.number || 'Sin Teléfono',
@@ -63,6 +78,7 @@ async function obtenerClientes() {
     console.error("Error obteniendo los envíos:", error.message);
   }
 }
+
 
 // Valida la existencia del usuario
 function isValidCustomer(rut) {
@@ -88,7 +104,7 @@ function isValidCustomer(rut) {
 //Crea el usuario
 function createCustomer(Datos) {
   
-  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}" "${Datos.Nombre}" "${Datos.Direccion}" "${Datos.Comuna}" "${Datos.Ciudad}" "${giro}" "${Datos.Telefono}" "${tipo_Usuario}" "${Datos.Fecha_Creacion}" "${numero1}" "${numero2}" "${numero3}" "${numero4}" "${Datos.Email}"`;
+  const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}"|"${Datos.Nombre}"|"${Datos.Direccion}"|"${Datos.Comuna}"|"${Datos.Ciudad}"|"${giro}"|"${Datos.Telefono}"|"${Datos.Telefono}"|"${Datos.Telefono}"|"${Datos.Nombre}"|"${tipo_Usuario}"|"${Datos.Fecha_Creacion}"|"${Datos.Fecha_Creacion}"|"${numero1}"|"${numero2}"|"${numero3}"|"${numero4}"|"${Datos.Telefono}"|"${Datos.Email}"`;
 
   let salidaCrear = shell.exec(comandoCrear, { silent: true });
   if (!salidaCrear || salidaCrear.code !== 0) {
