@@ -116,6 +116,11 @@ function createCustomer(Datos) {
 
   const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}""|""${Datos.Nombre}""|""${Datos.Direccion}""|""${Datos.Comuna}""|""${Datos.Ciudad}""|""${giro}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Telefono}""|""${Datos.Nombre}""|""${tipo_Usuario}""|""${Datos.Fecha_Creacion}""|""${Datos.Fecha_Creacion}""|""${numero1}""|""${numero2}""|""${numero3}""|""${numero4}""|""${Datos.Telefono}""|""${emailFormatted }"`;
 
+  // Mensaje en la terminal antes de ejecutar el script
+  console.log("🔍 Verificando creación del cliente...");
+  console.log("📩 Datos a enviar:");
+  console.log(JSON.stringify(Datos, null, 2)); 
+cam
   let salidaCrear = shell.exec(comandoCrear, { silent: true });
   if (!salidaCrear || salidaCrear.code !== 0) {
     console.error('Error: Creación fallida.');
