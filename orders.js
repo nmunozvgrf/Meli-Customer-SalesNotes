@@ -4,6 +4,21 @@ const shell = require('shelljs');
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
+async function getNumber() {
+  try{
+    const output = shell.exec("sh/data/getnumber_order.sh",{silent: true}).stdout.trim();
+    if (!output) throw new Error("NO se puede obtener el N° de orden.");
+    return output;
+  }catch (error){
+    console.error("Error al obtener el N° de orden.");
+    return null;
+  }
+  
+}
+
+
+
+
 async function obtenerPedidos() {
   try {
     const accessToken = await obtenerTokenVendedor(); 
@@ -19,6 +34,8 @@ async function obtenerPedidos() {
 
     const { data } = await axios.get(URL, { headers });
 
+    const numberOrder = await getNumber();
+
     const Pedidos = data.results
       .filter((pedido) => pedido.status === "paid")
       .map(order => {
@@ -27,6 +44,7 @@ async function obtenerPedidos() {
         const hora = fechaHora ? fechaHora.toLocaleTimeString() : "No Especificada";
 
         return {
+          Numero_orden: numberOrder,
           Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
           Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
           Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
