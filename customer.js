@@ -2,7 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const shell = require('shelljs');
 const { obtenerTokenComprador, obtenerUserIdComprador } = require("./token");
-const { channel } = require('diagnostics_channel');
+
 
 const tipo_Usuario = 'MM';
 const giro = 'PA';
