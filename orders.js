@@ -4,20 +4,29 @@ const shell = require('shelljs');
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
-async function getNumber() {
-  try{
-    const output = shell.exec("sh/data/getnumber_order.sh",{silent: true}).stdout.trim();
-    if (!output) throw new Error("NO se puede obtener el N° de orden.");
-    return output;
-  }catch (error){
-    console.error("Error al obtener el N° de orden.");
+function getNumber() {
+  try {
+    // Ejecutar el script y capturar la salida
+    const output = shell.exec("sh/data/getnumber_order.sh", { silent: true });
+
+    // Verificar si el script se ejecutó correctamente
+    if (output.code !== 0) {
+      throw new Error(`Error ejecutando el script: ${output.stderr}`);
+    }
+
+    // Obtener y limpiar la salida
+    const result = output.stdout.trim();
+
+    if (!result) {
+      throw new Error("El script no devolvió un número válido.");
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error ejecutando el script para obtener el número de orden:", error.message);
     return null;
   }
-  
 }
-
-
-
 
 async function obtenerPedidos() {
   try {
