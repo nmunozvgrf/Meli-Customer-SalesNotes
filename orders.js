@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { obtenerTokenVendedor } = require("./token"); 
 
+
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
 async function obtenerPedidos() {
@@ -20,12 +21,20 @@ async function obtenerPedidos() {
 
     const Pedidos = data.results
       .filter((pedido) => pedido.status === "paid")
-      .map(order => ({
-        Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
-        Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
-        Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-        tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
-      }));
+      .map(order => {
+        const fechaHora = order.date_created ? new Date(order.date_created) : null;
+        const fecha = fechaHora ? fechaHora.toLocaleDateString() : "No Especificada";
+        const hora = fechaHora ? fechaHora.toLocaleTimeString() : "No Especificada";
+
+        return {
+          Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
+          Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
+          Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
+          tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
+          fecha: fecha,
+          hora: hora,
+        };
+      });
 
     return Pedidos;
   } catch (error) {
