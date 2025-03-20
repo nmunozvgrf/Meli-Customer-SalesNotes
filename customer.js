@@ -118,7 +118,7 @@ function createCustomer(Datos) {
   Email = validEmail(Datos.Email);
   
   const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}|${Datos.Nombre}|${Datos.Direccion}|${Datos.Comuna}|${Datos.Ciudad}|${giro}|${Datos.Telefono}|${Datos.Telefono}|${Datos.Telefono}|${Datos.Nombre}|${tipo_Usuario}|${Datos.Fecha_Creacion}|${Datos.Fecha_Creacion}|${numero1}|${numero2}|${numero3}|${numero4}|${Datos.Telefono}|${Email}"`;
-  console.log(comandoCrear)
+  
   // Mensaje en la terminal antes de ejecutar el script
   console.log(" Verificando creación del cliente...");
   console.log("Datos a enviar:");
