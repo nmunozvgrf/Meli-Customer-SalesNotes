@@ -121,26 +121,7 @@ function createCustomer(Datos) {
   
   // Mensaje en la terminal antes de ejecutar el script
   console.log(" Verificando creación del cliente...");
-  console.log("Datos a enviar:");
-
-  console.log(JSON.stringify({
-    Rut: Datos.Rut,
-    Nombre: Datos.Nombre,
-    Direccion: Datos.Direccion,
-    Comuna: Datos.Comuna,
-    Ciudad: Datos.Ciudad,
-    Giro: giro,   
-    Telefono: Datos.Telefono,
-    Tipo_Usuario: tipo_Usuario, 
-    Fecha_Creacion: Datos.Fecha_Creacion,
-    Numero1: numero1, 
-    Numero2: numero2,
-    Numero3: numero3,
-    Numero4: numero4,
-    Email: Email,
-  }, null, 2));
-
-
+  
   let salidaCrear = shell.exec(comandoCrear, { silent: true });
   if (!salidaCrear || salidaCrear.code !== 0) {
     console.error('Error: Creación fallida.');
