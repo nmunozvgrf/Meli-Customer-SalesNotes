@@ -133,4 +133,5 @@ function createCustomer(Datos) {
   return true;
 }
 
-module.exports = { obtenerClientes, isValidCustomer, createCustomer };
+module.exports = { obtenerClientes, isValidCustomer, createCustomer, tipo_Usuario, giro, numero1, numero2, numero3, numero4};
+
