@@ -7,7 +7,7 @@ const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status
 function getNumber() {
   try {
     // Ejecutar el script y capturar la salida
-    const output = shell.exec(`getnumber_order.sh`, { silent: true });
+    const output = shell.exec(`sh/data/getnumber_order.sh`, { silent: true });
 
     // Verificar si el script se ejecutó correctamente
     if (output.code !== 0) {
