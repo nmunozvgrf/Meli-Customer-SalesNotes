@@ -5,6 +5,12 @@ const shell = require('shelljs');
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
+
+async function obtenerDatosCliente() {
+  const datos = await obtenerClientes();
+  console.log(datos);
+}
+
 function getNumber() {
   try {
     // Ejecutar el script y capturar la salida
@@ -70,5 +76,8 @@ async function obtenerPedidos() {
     return [];
   }
 }
+
+obtenerDatosCliente();
+
 
 module.exports = { obtenerPedidos };
