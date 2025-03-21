@@ -5,8 +5,8 @@ const APP_ID = '7657258499288508';
 const SECRET_KEY = 'pNcGkdqdSkv3gXiIRiYzdigAeS0BpSwM';
 const REDIRECT_URI = 'https://dev-mercadolibre.vigfor.cl';
 
-const AUTHORIZATION_CODE_1 = 'TG-67d4612260e51e0001040bb5-2318918105'; // Comprador
-const AUTHORIZATION_CODE_2 = 'TG-67d4610d449765000121cadb-2257183696'; // Vendedor
+const AUTHORIZATION_CODE_1 = 'TG-67ddbe82489d5c000130a7d0-2256702090'; // Comprador
+const AUTHORIZATION_CODE_2 = 'TG-67ddbe9cc15284000190cf96-2257183696'; // Vendedor
 
 const TOKEN_FILE = './tokens.json';
 
