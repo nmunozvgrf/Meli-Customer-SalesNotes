@@ -3,7 +3,6 @@ const fs = require('fs');
 const shell = require('shelljs');
 const { obtenerTokenComprador, obtenerUserIdComprador } = require("./token");
 
-
 const tipo_Usuario = 'MM';
 const giro = 'PA';
 const numero1 = '0';
@@ -11,27 +10,25 @@ const numero2 = '0';
 const numero3 = '1';
 const numero4 = '0';
 
-
-
 // Reemplazo para convertir a mayúsculas y normalizar
 function changeText(texto){
   if (!texto) return "Sin Datos";
   return texto.toUpperCase()
-              .replace("Á","A")
-              .replace("É","E")
-              .replace("Í","I")
-              .replace("Ó","O")
-              .replace("Ú","U")
-              .replace("Ñ","N")
-              .replace(" ","%20");
+              .replace(/Á/g, "A")
+              .replace(/É/g, "E")
+              .replace(/Í/g, "I")
+              .replace(/Ó/g, "O")
+              .replace(/Ú/g, "U")
+              .replace(/Ñ/g, "N")
+              .replace(/ /g, "%20");
 }
 
 function validEmail(email){
-  if (!email || typeof email !== "string" || !email.includes ("@")){
-    return "email_invalido@dominio.com"
+  if (!email || typeof email !== "string" || !email.includes("@")){
+    return "email_invalido@dominio.com";
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email.trim())? email.trim(): "email_invalido@dominio.com";
+  return emailRegex.test(email.trim()) ? email.trim() : "email_invalido@dominio.com";
 }
 
 async function obtenerClientes() {
@@ -58,21 +55,27 @@ async function obtenerClientes() {
     try {
       const { data } = await axios.get(url, { headers });
 
-      const fechaCreacion = data.registration_date? data.registration_date.split('T')[0].split('-').reverse().join(''): "Fecha NO Disponible";
-
+      const fechaCreacion = data.registration_date
+        ? data.registration_date.split('T')[0].split('-').reverse().join('')
+        : "Fecha NO Disponible";
 
       const Datos = {
+        Id_Comprador: data.id || 'Sin Id Comprador',
         Rut: (data.identification?.number || 'Sin Rut').replace(/-/g, ''), 
         Nombre: changeText(data.nickname || 'Sin Nombre'),
         Direccion: changeText(data.address?.address || 'Sin Dirección'),
         Ciudad: changeText(data.address?.city || 'Sin Ciudad'),
         Comuna: changeText(data.address?.state || 'Sin Comuna'),
-        Email:  validEmail(data.email || 'Sin Email'),
+        Email: validEmail(data.email || 'Sin Email'),
         Fecha_Creacion: fechaCreacion,
         Telefono: data.phone?.number || 'Sin Teléfono',
       };
 
       console.log('Datos del cliente:', Datos);
+
+      // Guardar Id_Comprador en un archivo JSON
+      fs.writeFileSync('id_comprador.json', JSON.stringify({ id_comprador: Datos.Id_Comprador }));
+      console.log('ID del comprador guardado en id_comprador.json');
 
       const esValido = isValidCustomer(Datos.Rut);
       if (esValido === 0) { 
@@ -89,7 +92,6 @@ async function obtenerClientes() {
     console.error("Error obteniendo los envíos:", error.message);
   }
 }
-
 
 // Valida la existencia del usuario
 function isValidCustomer(rut) {
@@ -112,15 +114,13 @@ function isValidCustomer(rut) {
   return isValid;
 }
 
-//Crea el usuario
+// Crea el usuario
 function createCustomer(Datos) {
-
-  Email = validEmail(Datos.Email);
+  const Email = validEmail(Datos.Email);
   
   const comandoCrear = `sh /data/create_customer.sh "${Datos.Rut}|${Datos.Nombre}|${Datos.Direccion}|${Datos.Comuna}|${Datos.Ciudad}|${giro}|${Datos.Telefono}|${Datos.Telefono}|${Datos.Telefono}|${Datos.Nombre}|${tipo_Usuario}|${Datos.Fecha_Creacion}|${Datos.Fecha_Creacion}|${numero1}|${numero2}|${numero3}|${numero4}|${Datos.Telefono}|${Email}"`;
   
-  // Mensaje en la terminal antes de ejecutar el script
-  console.log(" Verificando creación del cliente...");
+  console.log("Verificando creación del cliente...");
   
   let salidaCrear = shell.exec(comandoCrear, { silent: true });
   if (!salidaCrear || salidaCrear.code !== 0) {
@@ -133,5 +133,4 @@ function createCustomer(Datos) {
   return true;
 }
 
-module.exports = { obtenerClientes, isValidCustomer, createCustomer, tipo_Usuario, giro, numero1, numero2, numero3, numero4};
-
+module.exports = { obtenerClientes, isValidCustomer, createCustomer };
