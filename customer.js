@@ -73,10 +73,6 @@ async function obtenerClientes() {
 
       console.log('Datos del cliente:', Datos);
 
-      // Guardar Id_Comprador en un archivo JSON
-      fs.writeFileSync('id_comprador.json', JSON.stringify({ id_comprador: Datos.Id_Comprador }));
-      console.log('ID del comprador guardado en id_comprador.json');
-
       const esValido = isValidCustomer(Datos.Rut);
       if (esValido === 0) { 
         console.log(`Cliente no existe. Creándolo...`);
