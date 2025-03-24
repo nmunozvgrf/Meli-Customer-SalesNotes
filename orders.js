@@ -44,15 +44,18 @@ async function obtenerPedidos() {
     };
 
     const { data } = await axios.get(URL, { headers });
-
     const numberOrder = await getNumber();
 
-    const Pedidos = data.results
+    const Pedidos = await Promise.all(data.results
       .filter((pedido) => pedido.status === "paid")
-      .map(order => {
+      .map(async (order) => {
         const fechaHora = order.date_created ? new Date(order.date_created) : null;
         const fecha = fechaHora ? fechaHora.toLocaleDateString() : "No Especificada";
         const hora = fechaHora ? fechaHora.toLocaleTimeString() : "No Especificada";
+
+        // 🔹 Obtener datos del cliente en tiempo real
+        const Id_Comprador = order.buyer?.id || "Sin ID Comprador";
+        const Datos_Cliente = Id_Comprador ? await obtenerClientes(Id_Comprador) : null;
 
         return {
           Numero_orden: numberOrder,
@@ -62,8 +65,10 @@ async function obtenerPedidos() {
           tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
           fecha: fecha,
           hora: hora,
+          Cliente: Datos_Cliente,  // 🔹 Agregamos los datos del cliente a la orden
         };
-      });
+      })
+    );
 
     return Pedidos;
   } catch (error) {
@@ -71,6 +76,7 @@ async function obtenerPedidos() {
     return [];
   }
 }
+
 
 
 module.exports = { obtenerPedidos };

@@ -31,10 +31,10 @@ function validEmail(email){
   return emailRegex.test(email.trim()) ? email.trim() : "email_invalido@dominio.com";
 }
 
-async function obtenerClientes() {
+async function obtenerClientes(idComprador= null) {
   try {
     const accessToken = await obtenerTokenComprador();
-    const userIdComprador = obtenerUserIdComprador();
+    const userIdComprador = idComprador || obtenerUserIdComprador();
 
     if (!accessToken) {
       console.error("No se pudo obtener el token de acceso del comprador.");
@@ -82,7 +82,8 @@ async function obtenerClientes() {
       }
       
     } catch (error) {
-      console.error(`Error al obtener datos del comprador (${userIdComprador}):`, error.response?.data || error.message);
+      console.error(`Error al obtener datos del comprador (${IdComprador}):`, error.response?.data || error.message);
+      return {Id_Comprador: "Error en API"};
     }
   } catch (error) {
     console.error("Error obteniendo los envíos:", error.message);
