@@ -1,22 +1,17 @@
 const axios = require("axios");
 const { obtenerTokenVendedor } = require("./token"); 
-const {obtenerClientes, tipo_Usuario, giro, numero1, numero2, numero3, numero4} = require("./customer");
 const shell = require('shelljs');
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
-
 function getNumber() {
   try {
-    // Ejecutar el script y capturar la salida
     const output = shell.exec(`sh /data/getnumber_order.sh`, { silent: true });
 
-    // Verificar si el script se ejecutó correctamente
     if (output.code !== 0) {
       throw new Error(`Error ejecutando el script: ${output.stderr}`);
     }
 
-    // Obtener y limpiar la salida
     const result = output.stdout.trim();
 
     if (!result) {
@@ -53,10 +48,6 @@ async function obtenerPedidos() {
         const fecha = fechaHora ? fechaHora.toLocaleDateString() : "No Especificada";
         const hora = fechaHora ? fechaHora.toLocaleTimeString() : "No Especificada";
 
-        // 🔹 Obtener datos del cliente en tiempo real
-        const Id_Comprador = order.buyer?.id || "Sin ID Comprador";
-        const Datos_Cliente = Id_Comprador ? await obtenerClientes(Id_Comprador) : null;
-
         return {
           Numero_orden: numberOrder,
           Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
@@ -65,7 +56,6 @@ async function obtenerPedidos() {
           tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
           fecha: fecha,
           hora: hora,
-          Cliente: Datos_Cliente,  // 🔹 Agregamos los datos del cliente a la orden
         };
       })
     );
@@ -76,7 +66,5 @@ async function obtenerPedidos() {
     return [];
   }
 }
-
-
 
 module.exports = { obtenerPedidos };

@@ -31,11 +31,11 @@ function validEmail(email){
   return emailRegex.test(email.trim()) ? email.trim() : "email_invalido@dominio.com";
 }
 
-async function obtenerClientes(idComprador= null) {
+async function obtenerClientes() {
   try {
     const accessToken = await obtenerTokenComprador();
-    const userIdComprador = idComprador || obtenerUserIdComprador();
-
+    const userIdComprador = await obtenerUserIdComprador(); // Obtener el userId correctamente
+    
     if (!accessToken) {
       console.error("No se pudo obtener el token de acceso del comprador.");
       return;
@@ -52,6 +52,7 @@ async function obtenerClientes(idComprador= null) {
     };
 
     const url = `https://api.mercadolibre.com/users/${userIdComprador}`;
+
     try {
       const { data } = await axios.get(url, { headers });
 
@@ -80,15 +81,14 @@ async function obtenerClientes(idComprador= null) {
       } else if (esValido === 1) {
         console.log(`Cliente ya existe. No se creará.`);
       }
-      
     } catch (error) {
-      console.error(`Error al obtener datos del comprador (${IdComprador}):`, error.response?.data || error.message);
-      return {Id_Comprador: "Error en API"};
+      console.error("Error obteniendo los envíos:", error.message);
     }
   } catch (error) {
-    console.error("Error obteniendo los envíos:", error.message);
+    console.error("Error en obtenerClientes:", error.message);
   }
 }
+
 
 // Valida la existencia del usuario
 function isValidCustomer(rut) {
