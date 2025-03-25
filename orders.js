@@ -56,6 +56,7 @@ async function obtenerPedidos() {
           tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
           fecha: fecha,
           hora: hora,
+          Id: order.buyer.id || "NO Encontrado",
         };
       })
     );
