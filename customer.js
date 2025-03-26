@@ -149,7 +149,7 @@ async function obtenerDatos() {
       numero4
     };
 
-    console.log("Datos Combinados:", JSON.stringify(datosCombinados, null, 2));
+    console.log("Datos Combinados");
 
     return datosCombinados;
   } else {
