@@ -72,7 +72,7 @@ async function obtenerClientes() {
         Telefono: data.phone?.number || 'Sin Teléfono',
       };
 
-      console.log('Datos del cliente:', Datos);
+  
 
       const esValido = isValidCustomer(Datos.Rut);
       if (esValido === 0) { 
@@ -148,8 +148,6 @@ async function obtenerDatos() {
       numero3,
       numero4
     };
-
-    console.log("Datos Combinados");
 
     return datosCombinados;
   } else {

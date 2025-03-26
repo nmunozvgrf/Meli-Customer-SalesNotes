@@ -26,9 +26,46 @@ function getNumber() {
   }
 }
 
+// Función para comparar y unir datos si los IDs coinciden
+async function compararYUnirDatos(order) {
+  try {
+    const datosCliente = await obtenerDatos();
+
+    if (!datosCliente || !datosCliente.Datos || !datosCliente.Datos.Id_Comprador) {
+      console.error("No se pudo obtener el Id_Comprador del cliente.");
+      return null;
+    }
+
+    const idComprador = datosCliente.Datos.Id_Comprador;
+    const idBuyer = order.buyer.id || null;
+
+    if (idBuyer && idBuyer === idComprador) {
+      // Si los IDs coinciden, unir datos sin mostrar los IDs
+      const { Id_Comprador, ...datosSinID } = datosCliente.Datos;
+
+      return {
+        ...datosSinID, // Agrega los datos del cliente sin el ID
+        Numero_orden: await getNumber(),
+        Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
+        Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
+        Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
+        tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
+        fecha: new Date(order.date_created).toLocaleDateString() || "No Especificada",
+        hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
+  
+      };
+    } else {
+      return null; // No coinciden, no se une la información
+    }
+  } catch (error) {
+    console.error("Error comparando y uniendo datos:", error.message);
+    return null;
+  }
+}
+
 async function obtenerPedidos() {
   try {
-    const accessToken = await obtenerTokenVendedor(); 
+    const accessToken = await obtenerTokenVendedor();
 
     if (!accessToken) {
       throw new Error("No se pudo obtener el token de acceso del vendedor.");
@@ -40,44 +77,13 @@ async function obtenerPedidos() {
     };
 
     const { data } = await axios.get(URL, { headers });
-    const numberOrder = await getNumber();
 
-    // Obtener datos del comprador (cliente)
-    const datosCliente = await obtenerDatos();
-
-    // Obtener el Id_Comprador del cliente
-    const idComprador = datosCliente ? datosCliente.Datos.Id_Comprador : null;
-    if (!idComprador) {
-      console.error("No se pudo obtener el Id_Comprador.");
-      return [];
-    }
-
-    const Pedidos = await Promise.all(data.results
+    const pedidos = await Promise.all(data.results
       .filter((pedido) => pedido.status === "paid")
-      .map(async (order) => {
-        const fechaHora = order.date_created ? new Date(order.date_created) : null;
-        const fecha = fechaHora ? fechaHora.toLocaleDateString() : "No Especificada";
-        const hora = fechaHora ? fechaHora.toLocaleTimeString() : "No Especificada";
-
-        
-        const salesNotes = order.buyer.id === idComprador ? "SalesNote relacionada con el comprador" : "Sin SalesNote asociada";
-        
-        const Orden= {
-          Numero_orden: numberOrder,
-          Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
-          Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
-          Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-          tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
-          fecha: fecha,
-          hora: hora,
-          Id_Buyer: order.buyer.id || "NO Encontrado",
-          SalesNotes: salesNotes  
-        };
-        return Orden;
-      })
+      .map(async (order) => await compararYUnirDatos(order))
     );
 
-    return Pedidos;
+    return pedidos.filter((pedido) => pedido !== null); // Filtra solo los que coinciden
   } catch (error) {
     console.error("Error obteniendo las órdenes:", error.response?.data || error.message);
     return [];
