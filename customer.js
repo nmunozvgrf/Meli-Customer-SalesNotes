@@ -38,12 +38,12 @@ async function obtenerClientes() {
     
     if (!accessToken) {
       console.error("No se pudo obtener el token de acceso del comprador.");
-      return;
+      return null;
     }
 
     if (!userIdComprador) {
       console.error("No se pudo obtener el user_id del comprador.");
-      return;
+      return null;
     }
 
     const headers = {
@@ -81,14 +81,17 @@ async function obtenerClientes() {
       } else if (esValido === 1) {
         console.log(`Cliente ya existe. No se creará.`);
       }
+
+      return Datos; // Devolver los datos aquí
     } catch (error) {
       console.error("Error obteniendo los envíos:", error.message);
+      return null;
     }
   } catch (error) {
     console.error("Error en obtenerClientes:", error.message);
+    return null;
   }
 }
-
 
 // Valida la existencia del usuario
 function isValidCustomer(rut) {
@@ -130,4 +133,30 @@ function createCustomer(Datos) {
   return true;
 }
 
-module.exports = { obtenerClientes, isValidCustomer, createCustomer };
+async function obtenerDatosConVariables() {
+  const datosCliente = await obtenerClientes();
+
+  if (datosCliente) {
+   
+    // Aquí se combinan los datos y las variables adicionales
+    const datosCombinados = {
+      Datos: datosCliente,
+      tipo_Usuario,
+      giro,
+      numero1,
+      numero2,
+      numero3,
+      numero4
+    };
+
+    console.log("Datos Combinados:", JSON.stringify(datosCombinados, null, 2));
+
+    return datosCombinados;
+  } else {
+    
+    console.log("No se pudieron obtener los datos del cliente.");
+    return null;
+  }
+}
+
+module.exports = { obtenerClientes, isValidCustomer, createCustomer, obtenerDatosConVariables};
