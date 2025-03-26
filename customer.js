@@ -133,7 +133,7 @@ function createCustomer(Datos) {
   return true;
 }
 
-async function obtenerDatosConVariables() {
+async function obtenerDatos() {
   const datosCliente = await obtenerClientes();
 
   if (datosCliente) {
@@ -159,4 +159,4 @@ async function obtenerDatosConVariables() {
   }
 }
 
-module.exports = { obtenerClientes, isValidCustomer, createCustomer, obtenerDatosConVariables};
+module.exports = { obtenerClientes, isValidCustomer, createCustomer, obtenerDatos};
