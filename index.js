@@ -16,9 +16,11 @@ async function ejecutar() {
     const pedidos = await obtenerPedidos(tokenComprador); 
     console.log("Pedidos obtenidos:", pedidos);
 
+
    console.log("Obteniendo clientes...");
     await obtenerClientes(tokenVendedor); 
     await obtenerDatos();
+   
   } catch (error) {
     console.error("Error en la ejecución:", error.message);
   }
