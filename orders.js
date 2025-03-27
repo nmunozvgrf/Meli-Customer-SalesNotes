@@ -45,7 +45,7 @@ async function compararYUnirDatos(order) {
 
       return {
         ...datosSinID, // Agrega los datos del cliente sin el ID
-        Numero_orden: await getNumber(),
+        N_orden: await getNumber(),
         Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
