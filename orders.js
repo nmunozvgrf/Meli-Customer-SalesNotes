@@ -52,6 +52,7 @@ async function compararYUnirDatos(order) {
         tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
         fecha: new Date(order.date_created).toLocaleDateString() || "No Especificada",
         hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
+        sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
   
       };
     } else {
