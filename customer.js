@@ -72,7 +72,7 @@ async function obtenerClientes() {
         Telefono: data.phone?.number || 'Sin Teléfono',
       };
 
-  
+      //console.log(`Datos Cliente:`, Datos);
 
       const esValido = isValidCustomer(Datos.Rut);
       if (esValido === 0) { 

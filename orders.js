@@ -5,6 +5,20 @@ const shell = require('shelljs');
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
+const nulo = 'null';
+const blanco = ' ';
+const cero = '0';
+const uno= '1';
+const dos ='2';
+const sucursal ='3';
+const number='8990';
+const number2 ='7555';
+const number3 ='1435';
+const once ='11';
+const cerouno ='01';
+const cerodos ='02';
+
+
 function getNumber() {
   try {
     const output = shell.exec(`sh /data/getnumber_order.sh`, { silent: true });
@@ -50,10 +64,10 @@ async function compararYUnirDatos(order) {
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
-        fecha: new Date(order.date_created).toLocaleDateString() || "No Especificada",
+        fecha: new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') || "No Especificada",
         hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
         sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
-  
+    
       };
     } else {
       return null; // No coinciden, no se une la información
