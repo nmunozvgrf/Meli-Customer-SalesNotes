@@ -105,4 +105,43 @@ async function obtenerPedidos() {
   }
 }
 
-module.exports = { obtenerPedidos };
+async function compararYObtenerDatos(order) {
+  try {
+    const datosCliente = await obtenerDatos();
+
+    if (!datosCliente || !datosCliente.Datos || !datosCliente.Datos.Id_Comprador) {
+      console.error("No se pudo obtener el Id_Comprador del cliente.");
+      return null;
+    }
+
+    const idComprador = datosCliente.Datos.Id_Comprador;
+    const idBuyer = order.buyer.id || null;
+
+    if (idBuyer && idBuyer === idComprador) {
+      console.log("Los IDs coinciden, los datos se han juntado.");
+      return datosCliente.Datos; // Devuelve los datos sin modificar
+    }
+    
+    return null; // No coinciden, retorna null
+  } catch (error) {
+    console.error("Error obteniendo datos:", error.message);
+    return null;
+  }
+}
+
+function generarLineaDatos(datosCliente, order) {
+  if (!datosCliente || !order) {
+    console.error("Datos insuficientes para generar la línea.");
+    return null;
+  }
+  
+  return `numero_orders;${order.id};info_cust(${datosCliente.fecha || "nulo"}-${datosCliente.telefono || "nulo"}-${datosCliente.nombre || "nulo"}-${datosCliente.direccion || "nulo"}-${datosCliente.ciudad || "nulo"}-${datosCliente.telefono || "nulo"}-${datosCliente.telefono || "nulo"}-${datosCliente.giro || "nulo"});nulo;
+number;cero;cero;number;info_cust(${datosCliente.tipo_usuario || "nulo"});once;info_cust(${datosCliente.tipo_usuario || "nulo"});blanco;blanco;uno;
+nulo;nulo;cero;info_cust(${order.date_created ? new Date(order.date_created).toLocaleTimeString() : "nulo"});blanco;blanco;blaco;blanco;blanaco;blanco:blanco;info_cust(${datosCliente.correo || "nulo"});
+nulo;info_cust(${order.date_created ? new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') : "nulo"});blanco;blanco;blanco;${order.order_items?.[0]?.quantity || "number2"};cerouno;uno;${order.order_items?.[0]?.item?.id || "number3"};cero;nulo;nulo;cero;cero;
+nulo "|numero_orders;cerouno;${order.order_items?.[0]?.item?.seller_sku || "sku"};${order.seller_store || "sucursal"};dos;${order.order_items?.[0]?.quantity || "number2"};cero;${order.date_created ? new Date(order.date_created).toLocaleDateString('es-ES') : "fecha"};${order.date_created ? new Date(order.date_created).toLocaleTimeString() : "hora"};${order.order_items?.[0]?.unit_price || "precio"}|numero_orders;
+cerodos;${order.order_items?.[1]?.item?.seller_sku || "sku"};${order.seller_store || "sucursal"};${order.order_items?.[1]?.quantity || "cantidad"};uno;cero;cero;${order.date_created ? new Date(order.date_created).toLocaleDateString('es-ES') : "fecha"};${order.date_created ? new Date(order.date_created).toLocaleTimeString() : "hora"};${order.order_items?.[1]?.unit_price || "precio"}`;
+}
+
+
+module.exports = { obtenerPedidos,generarDatos };
