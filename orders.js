@@ -64,7 +64,6 @@ async function compararYUnirDatos(order) {
         Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-        tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
         fecha: new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') || "No Especificada",
         hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
         sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
@@ -97,7 +96,7 @@ async function obtenerPedidos() {
     const pedidos = await Promise.all(data.results
       .filter((pedido) => pedido.status === "paid")
       .map(async (order) => await compararYUnirDatos(order))
-    );
+    );  
 
     return pedidos.filter((pedido) => pedido !== null); // Filtra solo los que coinciden
   } catch (error) {
