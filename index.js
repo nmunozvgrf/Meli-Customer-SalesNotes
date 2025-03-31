@@ -1,5 +1,5 @@
-const { obtenerClientes,obtenerDatos } = require('./customer');
-const { obtenerPedidos,generarDatos} = require('./orders');
+const { obtenerClientes,} = require('./customer');//obtenerDatos } = require('./customer');
+const { obtenerPedidos} = require('./orders');
 const { obtenerTokenComprador, obtenerTokenVendedor } = require('./token');
 
 async function ejecutar() {
@@ -15,11 +15,10 @@ async function ejecutar() {
     console.log("Obteniendo pedidos...");
     const pedidos = await obtenerPedidos(tokenComprador); 
     console.log("Pedidos obtenidos:", pedidos);
-    await generarDatos();
-
+  
    console.log("Obteniendo clientes...");
     await obtenerClientes(tokenVendedor); 
-    await obtenerDatos();
+    //await obtenerDatos();
    
   } catch (error) {
     console.error("Error en la ejecución:", error.message);

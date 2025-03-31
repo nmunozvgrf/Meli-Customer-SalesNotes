@@ -133,7 +133,7 @@ function createCustomer(Datos) {
   return true;
 }
 
-async function obtenerDatos() {
+/*async function obtenerDatos() {
   const datosCliente = await obtenerClientes();
 
   if (datosCliente) {
@@ -155,6 +155,6 @@ async function obtenerDatos() {
     console.log("No se pudieron obtener los datos del cliente.");
     return null;
   }
-}
+}*/
 
-module.exports = { obtenerClientes, isValidCustomer, createCustomer, obtenerDatos};
+module.exports = { obtenerClientes, isValidCustomer, createCustomer,}; //obtenerDatos};
