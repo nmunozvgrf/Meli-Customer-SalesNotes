@@ -20,7 +20,7 @@ const cerouno = '01';
 const cerodos = '02';
 
 // Función para obtener el número de orden ejecutando un script externo
-function getNumber() {
+async function getNumber() {
   try {
     const output = shell.exec(`sh /data/getnumber_order.sh`, { silent: true });
 
@@ -107,14 +107,14 @@ async function obtenerPedidos() {
 }
 
 // Función para generar la línea de datos con información del cliente y productos
-function generarDatos(datosCliente, order) {
+async function generarDatos(datosCliente, order) {
   if (!datosCliente || !order) {
     console.error("Datos insuficientes para generar la línea.");
     return null;
   }
 
   // Obtener el número de orden desde getNumber()
-  const N_orden = getNumber();
+  const N_orden = await getNumber();
   if (!N_orden) {
     console.error("No se pudo obtener el número de orden.");
     return null;
@@ -130,17 +130,16 @@ function generarDatos(datosCliente, order) {
   const hora = fechaObj.toTimeString().split(' ')[0];
 
   // Construir la primera parte de la línea con información del cliente
-  const lineaCliente = `${N_orden};${fecha};${datosCliente.Telefono || nulo};${datosCliente.Nombre || nulo};${datosCliente.Ciudad || nulo};${datosCliente.Giro || nulo};${nulo};${number};${cero};${cero};${number};${datosCliente.Tipo_Usuario || nulo};${once};${datosCliente.Tipo_Usuario || nulo};${blanco};${blanco};${uno};${nulo};${nulo};${cero};${hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCliente.Email || nulo};${nulo};${fecha};${blanco};${blanco};${blanco};${number2};${cerouno};${uno};${number3};${cero};${nulo};${nulo};${cero};${cero};${nulo}`;
+  const lineaCliente = `${N_orden};${fecha};${datosCliente.Telefono};${datosCliente.Nombre};${datosCliente.Ciudad};${datosCliente.Giro};${nulo};${number};${cero};${cero};${number};${datosCliente.Tipo_Usuario};${once};${datosCliente.Tipo_Usuario};${blanco};${blanco};${uno};${nulo};${nulo};${cero};${hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCliente.Email};${nulo};${fecha};${blanco};${blanco};${blanco};${number2};${cerouno};${uno};${number3};${cero};${nulo};${nulo};${cero};${cero};${nulo}`;
 
   // Construir la parte repetitiva para cada producto en la orden
   const lineasProductos = order.order_items.map((item, index) => {
     const prefix = index === 0 ? '|' : '';
-    return `${prefix}${N_orden};${cero};${uno};${item.item.seller_sku || "sku"};${order.seller_store || sucursal};${dos};${item.quantity || number2};${cero};${fecha};${hora};${item.unit_price || "precio"}`;
+    return `${prefix}${N_orden};${cero};${uno};${item.item.seller_sku};${order.seller_store || sucursal};${dos};${item.quantity};${cero};${fecha};${hora};${item.unit_price}`;
   }).join('\n');
 
   // Unir ambas partes y retornar la línea completa
   return `${lineaCliente}\n${lineasProductos}`;
 }
-
 
 module.exports = { obtenerPedidos, generarDatos };
