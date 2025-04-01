@@ -41,20 +41,18 @@ async function obtenerPedidos() {
 
     const { data } = await axios.get(URL, { headers });
 
-    const pedidos = data.results.map((order) => ({
-      id: order.id,
-      fecha_creacion: order.date_created,
-      estado: order.status,
-      total: order.total_amount,
-      comprador_id: order.buyer.id,
-      items: order.order_items.map((item) => ({
-        id: item.item.id,
-        título: item.item.title,
-        cantidad: item.quantity,
-        precio_unitario: item.unit_price,
-      })),
-    }));
-
+    const pedidos = data.results.map(async (order) => ({
+      
+      N_orden: await getNumber(),
+        Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
+        Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
+        Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
+        tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
+        fecha: new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') || "No Especificada",
+        hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
+        sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
+      }));
+  
     return pedidos;
   } catch (error) {
     console.error("Error obteniendo las órdenes:", error.response?.data || error.message);
@@ -62,4 +60,84 @@ async function obtenerPedidos() {
   }
 }
 
-module.exports = { obtenerPedidos};
+async function obtenerDatosCombinados(order) {
+  // Verificar que la orden esté definida
+  if (!order) {
+    console.error("La orden no está definida.");
+    return null;
+  }
+
+  // Obtener el número de orden ejecutando un script externo
+  const N_orden = await getNumber();
+  if (!N_orden) {
+    console.error("No se pudo obtener el número de orden.");
+    return null;
+  }
+
+  // Extraer información relevante de la orden
+  const datosOrden = {
+    N_orden,
+    Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
+    Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
+    Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
+    fecha: new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') || "No Especificada",
+    hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
+    sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
+  };
+
+  // Definir variables adicionales
+  const variablesAdicionales = {
+      nulo:'null',
+      blanco : ' ',
+      cero :'0',
+      uno : '1',
+      dos : '2',
+      sucursal : '3',
+      number :'8990',
+      number2 :'7555',
+      number3 : '1435',
+      once : '11',
+      cerouno:'01',
+  };
+
+  // Combinar los datos de la orden con las variables adicionales
+  const datosCombinados = { ...datosOrden, ...variablesAdicionales };
+
+  console.log 
+
+  return datosCombinados;
+}
+
+
+
+function createOrder(order) {
+  // Verificar que la orden y los datos necesarios estén definidos
+  if (!order || !order.buyer || !order.order_items || order.order_items.length === 0) {
+    console.error('Error: Datos de la orden insuficientes.');
+    return false;
+  }
+
+  // Extraer datos del comprador y del primer artículo de la orden
+  const comprador = order.buyer;
+  const item = order.order_items[0].item;
+
+  // Construir el comando para crear el cliente
+  const comandoCrear = `sh /data/create_order.sh"${comprador.id}|${comprador.nickname}|${comprador.address?.address || 'Dirección no disponible'}|${comprador.address?.city?.name || 'Comuna no disponible'}|${comprador.address?.state?.name || 'Ciudad no disponible'}|GiroEjemplo|${comprador.phone?.number || 'Teléfono no disponible'}|${comprador.phone?.number || 'Teléfono no disponible'}|${comprador.phone?.number || 'Teléfono no disponible'}|${comprador.nickname}|TipoUsuarioEjemplo|${order.date_created}|${order.date_created}|Numero1Ejemplo|Numero2Ejemplo|Numero3Ejemplo|Numero4Ejemplo|${comprador.phone?.number || 'Teléfono no disponible'}|${comprador.email || 'email@ejemplo.com'}"`;
+
+  console.log("Verificando creación del cliente...");
+
+  // Ejecutar el comando en el shell
+  let salidaCrear = shell.exec(comandoCrear, { silent: true });
+  if (!salidaCrear || salidaCrear.code !== 0) {
+    console.error('Error: Creación fallida.');
+    console.error('Salida del script:', salidaCrear.stderr || salidaCrear.stdout);
+    return false;
+  }
+
+  console.log(`Cliente ${comprador.id} creado correctamente.`);
+  return true;
+}
+
+
+
+module.exports = { obtenerPedidos, createOrder, obtenerDatosCombinados};
