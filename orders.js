@@ -1,5 +1,7 @@
 const axios = require("axios");
 const shell = require('shelljs');
+const { obtenerTokenVendedor } = require("./token"); 
+//const { obtenerDatos } = require("./customer");
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
@@ -25,11 +27,6 @@ async function getNumber() {
   }
 }
 
-// Función para obtener el token de acceso del vendedor
-async function obtenerTokenVendedor() {
-  // Implementa la lógica para obtener el token de acceso
-  // ...
-}
 
 // Función para obtener los pedidos del vendedor
 async function obtenerPedidos() {
@@ -94,5 +91,6 @@ async function createOrder() {
 
   return true;
 }
+
 
 module.exports = { obtenerPedidos, createOrder,};
