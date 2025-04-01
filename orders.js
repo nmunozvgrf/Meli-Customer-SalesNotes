@@ -48,7 +48,6 @@ async function obtenerPedidos() {
       N_orden: await getNumber(),
       Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
       Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-      tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
       fecha: new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') || "No Especificada",
       hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
       sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
@@ -71,7 +70,7 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${pedido.Precio}|${pedido.Cantidad}|${pedido.tipo_pago}|${pedido.fecha}|${pedido.hora}|${pedido.sku}"`;
+    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${pedido.Precio}|${pedido.Cantidad}|${pedido.fecha}|${pedido.hora}|${pedido.sku}"`;
 
     // Mostrar el comando en la consola
     console.log("Comando a ejecutar:", comandoCrear);
