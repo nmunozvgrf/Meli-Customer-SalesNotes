@@ -46,7 +46,6 @@ async function obtenerPedidos() {
 
     const pedidos = await Promise.all(data.results.map(async (order) => ({
       N_orden: await getNumber(),
-      Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
       Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
       Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
       tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
@@ -72,7 +71,7 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${pedido.Producto}|${pedido.Precio}|${pedido.Cantidad}|${pedido.tipo_pago}|${pedido.fecha}|${pedido.hora}|${pedido.sku}"`;
+    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${pedido.Precio}|${pedido.Cantidad}|${pedido.tipo_pago}|${pedido.fecha}|${pedido.hora}|${pedido.sku}"`;
 
     // Mostrar el comando en la consola
     console.log("Comando a ejecutar:", comandoCrear);
