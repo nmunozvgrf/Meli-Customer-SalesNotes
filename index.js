@@ -1,5 +1,5 @@
 const { obtenerClientes,} = require('./customer');//obtenerDatos } = require('./customer');
-const { obtenerPedidos, createOrder, obtenerDatosCombinados} = require('./orders');
+const { obtenerPedidos, createOrder, } = require('./orders');
 const { obtenerTokenComprador, obtenerTokenVendedor } = require('./token');
 
 async function ejecutar() {
@@ -16,7 +16,7 @@ async function ejecutar() {
     const pedidos = await obtenerPedidos(tokenComprador); 
     console.log("Pedidos obtenidos:", pedidos);
     await createOrder();
-    await obtenerDatosCombinados();
+    
   
    console.log("Obteniendo clientes...");
     await obtenerClientes(tokenVendedor); 

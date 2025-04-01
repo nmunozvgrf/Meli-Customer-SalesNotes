@@ -4,9 +4,9 @@ const { obtenerTokenVendedor } = require("./token");
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
 // Función para obtener el número de orden ejecutando un script externo
-async function getNumber() {
+function getNumber() {
   try {
-    const output = shell.exec(sh /data/getnumber_order.sh, { silent: true });
+    const output = shell.exec(`sh /data/getnumber_order.sh`, { silent: true });
 
     if (output.code !== 0) {
       throw new Error(`Error ejecutando el script: ${output.stderr}`);
@@ -43,7 +43,7 @@ async function obtenerPedidos() {
 
     const pedidos = data.results.map(async (order) => ({
       
-      N_orden: await getNumber(),
+        N_orden: await getNumber(),
         Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
@@ -59,55 +59,6 @@ async function obtenerPedidos() {
     return [];
   }
 }
-
-async function obtenerDatosCombinados(order) {
-  // Verificar que la orden esté definida
-  if (!order) {
-    console.error("La orden no está definida.");
-    return null;
-  }
-
-  // Obtener el número de orden ejecutando un script externo
-  const N_orden = await getNumber();
-  if (!N_orden) {
-    console.error("No se pudo obtener el número de orden.");
-    return null;
-  }
-
-  // Extraer información relevante de la orden
-  const datosOrden = {
-    N_orden,
-    Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
-    Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
-    Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-    fecha: new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') || "No Especificada",
-    hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
-    sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
-  };
-
-  // Definir variables adicionales
-  const variablesAdicionales = {
-      nulo:'null',
-      blanco : ' ',
-      cero :'0',
-      uno : '1',
-      dos : '2',
-      sucursal : '3',
-      number :'8990',
-      number2 :'7555',
-      number3 : '1435',
-      once : '11',
-      cerouno:'01',
-  };
-
-  // Combinar los datos de la orden con las variables adicionales
-  const datosCombinados = { ...datosOrden, ...variablesAdicionales };
-
-  console.log 
-
-  return datosCombinados;
-}
-
 
 
 function createOrder(order) {
@@ -140,4 +91,4 @@ function createOrder(order) {
 
 
 
-module.exports = { obtenerPedidos, createOrder, obtenerDatosCombinados};
+module.exports = { obtenerPedidos, createOrder,};
