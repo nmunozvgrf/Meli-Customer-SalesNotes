@@ -1,10 +1,10 @@
 const axios = require("axios");
-const { obtenerTokenVendedor } = require("./token");
+const shell = require('shelljs');
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
 // Función para obtener el número de orden ejecutando un script externo
-function getNumber() {
+async function getNumber() {
   try {
     const output = shell.exec(`sh /data/getnumber_order.sh`, { silent: true });
 
@@ -25,6 +25,12 @@ function getNumber() {
   }
 }
 
+// Función para obtener el token de acceso del vendedor
+async function obtenerTokenVendedor() {
+  // Implementa la lógica para obtener el token de acceso
+  // ...
+}
+
 // Función para obtener los pedidos del vendedor
 async function obtenerPedidos() {
   try {
@@ -43,6 +49,7 @@ async function obtenerPedidos() {
 
     const pedidos = await Promise.all(data.results.map(async (order) => ({
       N_orden: await getNumber(),
+      Producto: order.order_items?.[0]?.item?.title || "Sin Producto",
       Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
       Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
       tipo_pago: order.payments?.[0]?.payment_type || "No Especificado",
@@ -68,7 +75,7 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${pedido.Precio}|${pedido.Cantidad}|${pedido.tipo_pago}|${pedido.fecha}|${pedido.hora}|${pedido.sku}"`;
+    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${pedido.Producto}|${pedido.Precio}|${pedido.Cantidad}|${pedido.tipo_pago}|${pedido.fecha}|${pedido.hora}|${pedido.sku}"`;
 
     // Mostrar el comando en la consola
     console.log("Comando a ejecutar:", comandoCrear);
@@ -87,6 +94,5 @@ async function createOrder() {
 
   return true;
 }
-
 
 module.exports = { obtenerPedidos, createOrder,};
