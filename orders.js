@@ -16,14 +16,12 @@ const ceroUno ='01';
 const numeroD ='20241211';
 const once ='11';
 
-
 // Reemplazo para convertir a mayúsculas y normalizar
 function changeText(texto){
   if (!texto) return "Sin Datos";
   return texto.toUpperCase()
               .replace(/ /g, "%20");
 }
-
 
 // Función para obtener el número de orden ejecutando un script externo
 async function getNumber() {
@@ -46,7 +44,6 @@ async function getNumber() {
     return null;
   }
 }
-
 
 // Función para obtener los pedidos del vendedor
 async function obtenerPedidos() {
@@ -120,7 +117,5 @@ async function createOrder() {
 
   return true;
 }
-
-
 
 module.exports = { obtenerPedidos, createOrder,};
