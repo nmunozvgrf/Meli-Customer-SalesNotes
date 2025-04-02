@@ -5,6 +5,20 @@ const { obtenerTokenVendedor } = require("./token");
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
+const nulo = 'null';
+const blanco = ' ';
+const cero = '0';
+const uno= '1';
+const dos ='2';
+const sucursal ='3';
+const number='8990';
+const number2 ='7555';
+const number3 ='1435';
+const once ='11';
+const cerouno ='01';
+const cerodos ='02';
+
+
 // Función para obtener el número de orden ejecutando un script externo
 async function getNumber() {
   try {
@@ -70,7 +84,7 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${pedido.Precio}|${pedido.Cantidad}|${pedido.fecha}|${pedido.hora}|${pedido.sku}"`;
+    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${cero}|${uno}|${pedido.sku}|${sucursal}|${pedido.Cantidad}|${uno}|${cero}|${cero}|${pedido.fecha}|${pedido.hora}|${pedido.Precio}"`;
 
     // Mostrar el comando en la consola
     console.log("Comando a ejecutar:", comandoCrear);
