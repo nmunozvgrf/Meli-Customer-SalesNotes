@@ -103,11 +103,7 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh  /data/create_order.sh "${pedido.N_orden};${datosCombinados.Datos.Fecha_Creacion};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};
-    ${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};
-    ${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${uno};${nulo};${nulo};${cero};${blanco};${pedido.Hora};${blanco};
-    ${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};
-    ${cero};${nulo};${nulo};${cero};${cero};${nulo}|${pedido.N_orden};${cero};${uno};${pedido.Sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
+    const comandoCrear = `sh  /data/create_order.sh "${pedido.N_orden};${datosCombinados.Datos.Fecha_Creacion};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${uno};${nulo};${nulo};${cero};${blanco};${pedido.Hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};${cero};${nulo};${nulo};${cero};${cero};${nulo}|${pedido.N_orden};${cero};${uno};${pedido.Sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
 
     console.log("Comando a ejecutar:", comandoCrear);
     console.log("Verificando creación de la nota de venta...");
