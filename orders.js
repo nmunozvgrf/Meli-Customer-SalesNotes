@@ -11,7 +11,7 @@ const cero = '0';
 const uno= '1';
 const dos ='2';
 const sucursal ='3';
-const number='8990';
+//const number='8990';--> total de la orden sacar del endpoint
 const number2 ='7555';
 const number3 ='1435';
 const once ='11';
@@ -84,7 +84,8 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh /data/create_customer.sh "${pedido.N_orden}|${cero}|${uno}|${pedido.sku}|${sucursal}|${pedido.Cantidad}|${uno}|${cero}|${cero}|${pedido.fecha}|${pedido.hora}|${pedido.Precio}"`;
+    const comandoCrear = `sh  /data/create_order.sh"${pedido.N_orden};${cero};${uno};${pedido.sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.fecha};${pedido.hora};${pedido.Precio}"`;
+
 
     // Mostrar el comando en la consola
     console.log("Comando a ejecutar:", comandoCrear);
