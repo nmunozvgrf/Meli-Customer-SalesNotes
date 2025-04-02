@@ -6,7 +6,7 @@ const { obtenerDatos } = require("./customer");
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
 const nulo = 'null';
-const blanco = ' ';
+const blanco = '';
 const cero = '0';
 const uno= '1';
 const sucursal ='3';
