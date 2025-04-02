@@ -1,7 +1,7 @@
 const axios = require("axios");
 const shell = require('shelljs');
 const { obtenerTokenVendedor } = require("./token"); 
-//const { obtenerDatos } = require("./customer");
+const { obtenerDatos } = require("./customer");
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
@@ -9,14 +9,12 @@ const nulo = 'null';
 const blanco = ' ';
 const cero = '0';
 const uno= '1';
-const dos ='2';
 const sucursal ='3';
-//const number='8990';--> total de la orden sacar del endpoint
-const number2 ='7555';
-const number3 ='1435';
-const once ='11';
-const cerouno ='01';
-const cerodos ='02';
+const numeroE ='7555';
+const numeroF ='1435';
+const ceroUno ='01';
+const numeroD='20241211';
+
 
 
 // Función para obtener el número de orden ejecutando un script externo
@@ -91,7 +89,11 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh  /data/create_order.sh"${pedido.N_orden};${cero};${uno};${pedido.Sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
+    const comandoCrear = `sh  /data/create_order.sh"${pedido.N_orden};${datosCombinados.datos.fecha};${datosCombinados.datos.rut};${datosCombinados.datos.nombre};${datosCombinados.datos.direccion};${datosCombinados.datos.region};
+    ${datosCombinados.datos.telefono};${datosCombinados.datos.telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};
+    ${datosCombinados.datos.Tipo_usuario};${once};${datosCombinados.datos.Tipo_usuario};${blanco};${blanco};${uno};${nulo};${nulo};${cero};${blanco};${datosCombinados.datos.hora};${blanco};
+    ${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.datos.correo};${nulo};${numeroD};${blanco};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};
+    ${cero};${nulo};${nulo};${cero};${cero};${nulo}|${pedido.N_orden};${cero};${uno};${pedido.Sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
 
 
     // Mostrar el comando en la consola
