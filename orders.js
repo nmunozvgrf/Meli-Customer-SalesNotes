@@ -60,16 +60,17 @@ async function obtenerPedidos() {
 
     const pedidos = await Promise.all(data.results.map(async (order) => {
       const fechaObj = new Date(order.date_created);
-      const fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
-      const hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
+      const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
+      const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
       
       return {
         N_orden: await getNumber(),
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-        fecha,
-        hora,
-        sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
+        Fecha,
+        Hora,
+        Sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
+        Pago: order.paid_amount || "0",
       };
     }));
 
@@ -90,7 +91,7 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh  /data/create_order.sh"${pedido.N_orden};${cero};${uno};${pedido.sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.fecha};${pedido.hora};${pedido.Precio}"`;
+    const comandoCrear = `sh  /data/create_order.sh"${pedido.N_orden};${cero};${uno};${pedido.Sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
 
 
     // Mostrar el comando en la consola
