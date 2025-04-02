@@ -58,14 +58,20 @@ async function obtenerPedidos() {
 
     const { data } = await axios.get(URL, { headers });
 
-    const pedidos = await Promise.all(data.results.map(async (order) => ({
-      N_orden: await getNumber(),
-      Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
-      Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-      fecha: new Date(order.date_created).toLocaleDateString('es-ES').split('/').reverse().join('') || "No Especificada",
-      hora: new Date(order.date_created).toLocaleTimeString() || "No Especificada",
-      sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
-    })));
+    const pedidos = await Promise.all(data.results.map(async (order) => {
+      const fechaObj = new Date(order.date_created);
+      const fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
+      const hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
+      
+      return {
+        N_orden: await getNumber(),
+        Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
+        Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
+        fecha,
+        hora,
+        sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
+      };
+    }));
 
     return pedidos;
   } catch (error) {
