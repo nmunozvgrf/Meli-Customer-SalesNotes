@@ -17,6 +17,13 @@ const numeroD ='20241211';
 const once ='11';
 
 
+// Reemplazo para convertir a mayúsculas y normalizar
+function changeText(texto){
+  if (!texto) return "Sin Datos";
+  return texto.toUpperCase()
+              .replace(/ /g, "%20");
+}
+
 
 // Función para obtener el número de orden ejecutando un script externo
 async function getNumber() {
@@ -68,7 +75,7 @@ async function obtenerPedidos() {
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
         Hora,
-        Sku: order.order_items?.[0]?.item?.seller_sku || "No Especificado",
+        Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
       };
     }));
