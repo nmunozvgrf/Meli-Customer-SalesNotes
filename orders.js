@@ -82,6 +82,12 @@ async function obtenerPedidos() {
 // Función para crear la nota de venta
 async function createOrder() {
   const pedidos = await obtenerPedidos();
+  const datosCombinados = await obtenerDatos(); // Asegúrate de obtener los datos
+
+  if (!datosCombinados || !datosCombinados.Datos) {
+    console.error("Error: No se pudieron obtener los datos combinados.");
+    return false;
+  }
 
   if (pedidos.length === 0) {
     console.log("No hay pedidos para procesar.");
@@ -89,16 +95,13 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh  /data/create_order.sh"${pedido.N_orden};${datosCombinados.datos.fecha};${datosCombinados.datos.rut};${datosCombinados.datos.nombre};${datosCombinados.datos.direccion};${datosCombinados.datos.region};
-    ${datosCombinados.datos.telefono};${datosCombinados.datos.telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};
-    ${datosCombinados.datos.Tipo_usuario};${once};${datosCombinados.datos.Tipo_usuario};${blanco};${blanco};${uno};${nulo};${nulo};${cero};${blanco};${datosCombinados.datos.hora};${blanco};
-    ${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.datos.correo};${nulo};${numeroD};${blanco};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};
+    const comandoCrear = `sh  /data/create_order.sh "${pedido.N_orden};${datosCombinados.Datos.Fecha_Creacion};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};
+    ${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};
+    ${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${uno};${nulo};${nulo};${cero};${blanco};${pedido.Hora};${blanco};
+    ${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};
     ${cero};${nulo};${nulo};${cero};${cero};${nulo}|${pedido.N_orden};${cero};${uno};${pedido.Sku};${sucursal};${pedido.Cantidad};${uno};${cero};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
 
-
-    // Mostrar el comando en la consola
     console.log("Comando a ejecutar:", comandoCrear);
-
     console.log("Verificando creación de la nota de venta...");
 
     let salidaCrear = shell.exec(comandoCrear, { silent: true });
@@ -113,6 +116,7 @@ async function createOrder() {
 
   return true;
 }
+
 
 
 module.exports = { obtenerPedidos, createOrder,};
