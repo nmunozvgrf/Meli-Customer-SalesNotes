@@ -15,6 +15,8 @@ const numeroF ='1435';
 const ceroUno ='01';
 const numeroD ='20241211';
 const once ='11';
+const nuloCero='nullnull0';
+const nulZero ='nullnull00null';
 
 // Reemplazo para convertir a mayúsculas y normalizar
 function changeText(texto){
