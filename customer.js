@@ -56,10 +56,10 @@ async function obtenerClientes() {
     try {
       const { data } = await axios.get(url, { headers });
 
-      const fechaCreacion = data.registration_date
-        ? data.registration_date.split('T')[0].split('-').reverse().join('')
-        : "Fecha NO Disponible";
-
+      const fechaObj = new Date(data.registration_date);
+      const fecha_Creacion = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
+      const hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
+        
       const Datos = {
         Id_Comprador: data.id || 'Sin Id Comprador',
         Rut: (data.identification?.number || 'Sin Rut').replace(/-/g, ''), 
@@ -68,7 +68,8 @@ async function obtenerClientes() {
         Ciudad: changeText(data.address?.city || 'Sin Ciudad'),
         Comuna: changeText(data.address?.state || 'Sin Comuna'),
         Email: validEmail(data.email || 'Sin Email'),
-        Fecha_Creacion: fechaCreacion,
+        fecha_Creacion,
+        hora,
         Telefono: data.phone?.number || 'Sin Teléfono',
       };
 
