@@ -76,6 +76,8 @@ async function obtenerPedidos() {
         Hora,
         Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
+        BuyerID: order.buyer?.id || "Sin ID",
+
       };
     }));
 
