@@ -8,24 +8,21 @@ const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status
 const nulo = 'null';
 const blanco = '';
 const cero = '0';
-const uno= '1';
-const sucursal ='3';
-const numeroE ='7555';
-const numeroF ='1435';
-const ceroUno ='01';
-const numeroD ='20241211';
-const once ='11';
-const nuloCero='nullnull0';
-const nullZero ='nullnull00null';
+const uno = '1';
+const sucursal = '3';
+const numeroE = '7555';
+const numeroF = '1435';
+const ceroUno = '01';
+const numeroD = '20241211';
+const once = '11';
+const nuloCero = 'nullnull0';
+const nullZero = 'nullnull00null';
 
-// Reemplazo para convertir a mayúsculas y normalizar
-function changeText(texto){
+function changeText(texto) {
   if (!texto) return "Sin Datos";
-  return texto.toUpperCase()
-              .replace(/ /g, "%20");
+  return texto.toUpperCase().replace(/ /g, "%20");
 }
 
-// Función para obtener el número de orden ejecutando un script externo
 async function getNumber() {
   try {
     const output = shell.exec(`sh /data/getnumber_order.sh`, { silent: true });
@@ -47,7 +44,7 @@ async function getNumber() {
   }
 }
 
-// Función para obtener los pedidos del vendedor
+// Obtener pedidos pagados
 async function obtenerPedidos() {
   try {
     const accessToken = await obtenerTokenVendedor();
@@ -63,13 +60,12 @@ async function obtenerPedidos() {
 
     const { data } = await axios.get(URL, { headers });
 
-    const pedidos = await Promise.all(data.results.map(async (order) => {
+    const pedidos = data.results.map((order) => {
       const fechaObj = new Date(order.date_created);
       const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
       const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
-      
+
       return {
-        N_orden: await getNumber(),
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
@@ -77,9 +73,8 @@ async function obtenerPedidos() {
         Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
         BuyerID: order.buyer?.id || "Sin ID",
-
       };
-    }));
+    });
 
     return pedidos;
   } catch (error) {
@@ -88,10 +83,10 @@ async function obtenerPedidos() {
   }
 }
 
-// Función para crear la nota de venta
+// Crear nota de venta
 async function createOrder() {
   const pedidos = await obtenerPedidos();
-  const datosCombinados = await obtenerDatos(); // Asegúrate de obtener los datos
+  const datosCombinados = await obtenerDatos();
 
   if (!datosCombinados || !datosCombinados.Datos) {
     console.error("Error: No se pudieron obtener los datos combinados.");
@@ -104,8 +99,22 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    const comandoCrear = `sh /data/create_order.sh "${pedido.N_orden};${datosCombinados.Datos.fecha_Creacion};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${once};${nuloCero};${blanco};${datosCombinados.Datos.hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};${cero};${nullZero}|${pedido.N_orden};${ceroUno};${pedido.Sku};${sucursal};${pedido.Cantidad};${numeroE};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;    console.log("Comando a ejecutar:", comandoCrear);
-    console.log("Verificando creación de la nota de venta...");
+    // Validación de coincidencia de IDs
+    if (pedido.BuyerID !== datosCombinados.Datos.Id_Comprador) {
+      console.log(`Pedido ignorado: ID comprador no coincide (${pedido.BuyerID} ≠ ${datosCombinados.Datos.Id_Comprador}).`);
+      continue;
+    }
+
+    // Solo si los IDs coinciden, se obtiene el número
+    const numeroOrden = await getNumber();
+    if (!numeroOrden) {
+      console.error(`No se pudo obtener el número de orden para BuyerID: ${pedido.BuyerID}`);
+      continue;
+    }
+
+    const comandoCrear = `sh /data/create_order.sh "${numeroOrden};${datosCombinados.Datos.fecha_Creacion};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${once};${nuloCero};${blanco};${datosCombinados.Datos.hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};${cero};${nullZero}|${numeroOrden};${ceroUno};${pedido.Sku};${sucursal};${pedido.Cantidad};${numeroE};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
+
+    console.log("Comando a ejecutar:", comandoCrear);
 
     let salidaCrear = shell.exec(comandoCrear, { silent: true });
     if (!salidaCrear || salidaCrear.code !== 0) {
@@ -114,10 +123,10 @@ async function createOrder() {
       return false;
     }
 
-    console.log(`Nota de venta para la orden ${pedido.N_orden} creada correctamente.`);
+    console.log(`Nota de venta para la orden ${numeroOrden} creada correctamente.`);
   }
 
   return true;
 }
 
-module.exports = { obtenerPedidos, createOrder,};
+module.exports = { obtenerPedidos, createOrder };
