@@ -60,21 +60,26 @@ async function obtenerPedidos() {
 
     const { data } = await axios.get(URL, { headers });
 
-    const pedidos = data.results.map((order) => {
+    const pedidos = await Promise.all(data.results.map(async (order) => {
+      console.log('Datos completos de la orden:', order);
+
       const fechaObj = new Date(order.date_created);
       const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
       const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
 
+      const buyerID = order.buyer.id || 'Sin Id Comprador';
+
       return {
+        N_orden: await getNumber(),
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
         Hora,
         Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
-        BuyerID: order.buyer?.id || "Sin ID",
+        BuyerID: buyerID,  
       };
-    });
+    }));
 
     return pedidos;
   } catch (error) {
@@ -83,7 +88,6 @@ async function obtenerPedidos() {
   }
 }
 
-// Crear nota de venta
 async function createOrder() {
   const pedidos = await obtenerPedidos();
   const datosCombinados = await obtenerDatos();
@@ -99,16 +103,21 @@ async function createOrder() {
   }
 
   for (const pedido of pedidos) {
-    // Validación de coincidencia de IDs
-    if (pedido.BuyerID !== datosCombinados.Datos.Id_Comprador) {
-      console.log(`Pedido ignorado: ID comprador no coincide (${pedido.BuyerID} ≠ ${datosCombinados.Datos.Id_Comprador}).`);
+    const buyerIDPedido = String(pedido.BuyerID).trim();
+    const idCompradorDatos = String(datosCombinados.Datos.Id_Comprador).trim();
+
+    console.log(`ID Comprador Pedido: "${buyerIDPedido}"`);
+    console.log(`ID Comprador Datos: "${idCompradorDatos}"`);
+    console.log(`¿Coinciden los IDs? ${buyerIDPedido === idCompradorDatos}`);
+
+    if (buyerIDPedido !== idCompradorDatos) {
+      console.log(`Pedido ignorado: ID comprador no coincide (${buyerIDPedido} ≠ ${idCompradorDatos}).`);
       continue;
     }
 
-    // Solo si los IDs coinciden, se obtiene el número
     const numeroOrden = await getNumber();
     if (!numeroOrden) {
-      console.error(`No se pudo obtener el número de orden para BuyerID: ${pedido.BuyerID}`);
+      console.error(`No se pudo obtener el número de orden para BuyerID: ${buyerIDPedido}`);
       continue;
     }
 
