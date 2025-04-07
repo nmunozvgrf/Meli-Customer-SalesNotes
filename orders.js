@@ -1,5 +1,7 @@
 const axios = require("axios");
 const shell = require('shelljs');
+const fs = require("fs");
+const path = require("path");
 const { obtenerTokenVendedor } = require("./token"); 
 const { obtenerDatos } = require("./customer");
 
@@ -22,6 +24,15 @@ function changeText(texto) {
   if (!texto) return "Sin Datos";
   return texto.toUpperCase().replace(/ /g, "%20");
 }
+
+async function enviarCorreoAlerta(buyerID) {
+  // Simulación de envío de correo: guardar en log
+  const logPath = path.join(__dirname, "alerta_ids_no_coinciden.log");
+  const mensaje = `⚠️ BuyerID no coincide: ${buyerID} - ${new Date().toISOString()}\n`;
+  fs.appendFileSync(logPath, mensaje);
+  console.log("Correo simulado enviado por ID no coincidente:", buyerID);
+}
+
 
 async function getNumber() {
   try {
@@ -88,12 +99,13 @@ async function obtenerPedidos() {
   }
 }
 
+
 async function createOrder() {
   const pedidos = await obtenerPedidos();
   const datosCombinados = await obtenerDatos();
 
   if (!datosCombinados || !datosCombinados.Datos) {
-    console.error("Error: No se pudieron obtener los datos combinados.");
+    console.error("No se pudieron obtener los datos combinados.");
     return false;
   }
 
@@ -102,40 +114,49 @@ async function createOrder() {
     return false;
   }
 
-  for (const pedido of pedidos) {
+  // Filtrar pedidos que coincidan con el ID de comprador
+  const pedidosCoincidentes = pedidos.filter(pedido => {
     const buyerIDPedido = String(pedido.BuyerID).trim();
     const idCompradorDatos = String(datosCombinados.Datos.Id_Comprador).trim();
 
-    console.log(`ID Comprador Pedido: "${buyerIDPedido}"`);
-    console.log(`ID Comprador Datos: "${idCompradorDatos}"`);
-    console.log(`¿Coinciden los IDs? ${buyerIDPedido === idCompradorDatos}`);
-
     if (buyerIDPedido !== idCompradorDatos) {
-      console.log(`Pedido ignorado: ID comprador no coincide (${buyerIDPedido} ≠ ${idCompradorDatos}).`);
-      continue;
+      enviarCorreoAlerta(buyerIDPedido); //ID no coincide
+      return false;
     }
 
+    return true;
+  });
+
+  if (pedidosCoincidentes.length === 0) {
+    console.log(" Ningún pedido coincide con el ID de comprador.");
+    return false;
+  }
+
+  for (const pedido of pedidosCoincidentes) {
     const numeroOrden = await getNumber();
     if (!numeroOrden) {
-      console.error(`No se pudo obtener el número de orden para BuyerID: ${buyerIDPedido}`);
+      console.error(`No se pudo obtener el número de orden para BuyerID: ${pedido.BuyerID}`);
       continue;
     }
 
     const comandoCrear = `sh /data/create_order.sh "${numeroOrden};${datosCombinados.Datos.fecha_Creacion};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${once};${nuloCero};${blanco};${datosCombinados.Datos.hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};${cero};${nullZero}|${numeroOrden};${ceroUno};${pedido.Sku};${sucursal};${pedido.Cantidad};${numeroE};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
 
-    console.log("Comando a ejecutar:", comandoCrear);
+    console.log("🛠 Ejecutando comando:", comandoCrear);
 
     let salidaCrear = shell.exec(comandoCrear, { silent: true });
     if (!salidaCrear || salidaCrear.code !== 0) {
-      console.error('Error: Creación fallida.');
-      console.error('Salida del script:', salidaCrear.stderr || salidaCrear.stdout);
-      return false;
+      console.error("Error al crear la orden.");
+      console.error(" Salida:", salidaCrear.stderr || salidaCrear.stdout);
+      continue;
     }
 
-    console.log(`Nota de venta para la orden ${numeroOrden} creada correctamente.`);
+    console.log(`Nota de venta para la orden ${numeroOrden} creada exitosamente.`);
   }
 
   return true;
 }
 
+
 module.exports = { obtenerPedidos, createOrder };
+
+
