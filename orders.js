@@ -72,7 +72,7 @@ async function obtenerPedidos() {
     const { data } = await axios.get(URL, { headers });
 
     const pedidos = await Promise.all(data.results.map(async (order) => {
-      console.log('Datos completos de la orden:', order);
+      //console.log('Datos completos de la orden:', order);
 
       const fechaObj = new Date(order.date_created);
       const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
