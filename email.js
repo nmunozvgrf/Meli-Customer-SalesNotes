@@ -55,3 +55,5 @@ class sendmail {
         }
     }
 }
+
+module.exports = { sendmail};
