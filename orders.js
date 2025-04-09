@@ -95,7 +95,7 @@ async function enviarCorreoAlerta(buyerID) {
   const mensajeHTML = `<p><strong>Alerta:</strong> Se detectó un BuyerID no coincidente.</p><p>BuyerID: <b>${buyerID}</b></p>`;
   const destinatario = process.env.ALERTA_EMAIL || "nmunoz@vigfor.cl";
 
-  await mailer.sendEmail(destinatario, asunto, mensajeHTML, mensajeTexto);
+  await mailer.send365Email(destinatario, asunto, mensajeHTML, mensajeTexto);
 }
 
 async function createOrder() {
