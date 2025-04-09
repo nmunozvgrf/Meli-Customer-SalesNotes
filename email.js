@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer'); // --save agregar 
 require('dotenv').config();
 
-class sendmail {
+class Sendmail {
     async send365Email(to, subject, html, text, attachments = [], cc = "", bcc = "") {
         try {
             let from = process.env.MAIL_FROM_ADDRESS;
@@ -56,4 +56,4 @@ class sendmail {
     }
 }
 
-module.exports = { sendmail};
+module.exports = { Sendmail};

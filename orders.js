@@ -4,6 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const { obtenerTokenVendedor } = require("./token"); 
 const { obtenerDatos } = require("./customer");
+const { Sendmail } = require("./email");
+const mailer = new Sendmail();
 
 const URL = "https://api.mercadolibre.com/orders/search?seller=2257183696&status=paid";
 
@@ -24,15 +26,6 @@ function changeText(texto) {
   if (!texto) return "Sin Datos";
   return texto.toUpperCase().replace(/ /g, "%20");
 }
-
-async function enviarCorreoAlerta(buyerID) {
-  // Simulación de envío de correo: guardar en log
-  const logPath = path.join(__dirname, "alerta_ids_no_coinciden.log");
-  const mensaje = `⚠️ BuyerID no coincide: ${buyerID} - ${new Date().toISOString()}\n`;
-  fs.appendFileSync(logPath, mensaje);
-  console.log("Correo simulado enviado por ID no coincidente:", buyerID);
-}
-
 
 async function getNumber() {
   try {
@@ -55,7 +48,6 @@ async function getNumber() {
   }
 }
 
-// Obtener pedidos pagados
 async function obtenerPedidos() {
   try {
     const accessToken = await obtenerTokenVendedor();
@@ -72,8 +64,6 @@ async function obtenerPedidos() {
     const { data } = await axios.get(URL, { headers });
 
     const pedidos = await Promise.all(data.results.map(async (order) => {
-      //console.log('Datos completos de la orden:', order);
-
       const fechaObj = new Date(order.date_created);
       const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
       const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
@@ -99,6 +89,14 @@ async function obtenerPedidos() {
   }
 }
 
+async function enviarCorreoAlerta(buyerID) {
+  const asunto = "⚠️ Alerta: Buyer ID no coincide";
+  const mensajeTexto = `Se detectó un BuyerID no coincidente: ${buyerID}`;
+  const mensajeHTML = `<p><strong>Alerta:</strong> Se detectó un BuyerID no coincidente.</p><p>BuyerID: <b>${buyerID}</b></p>`;
+  const destinatario = process.env.ALERTA_EMAIL || "nmunoz@vigfor.cl";
+
+  await mailer.sendEmail(destinatario, asunto, mensajeHTML, mensajeTexto);
+}
 
 async function createOrder() {
   const pedidos = await obtenerPedidos();
@@ -114,18 +112,20 @@ async function createOrder() {
     return false;
   }
 
-  // Filtrar pedidos que coincidan con el ID de comprador
-  const pedidosCoincidentes = pedidos.filter(pedido => {
-    const buyerIDPedido = String(pedido.BuyerID).trim();
-    const idCompradorDatos = String(datosCombinados.Datos.Id_Comprador).trim();
+  // Usamos Promise.all con map para que puedas usar async/await dentro del filtro
+  const pedidosCoincidentes = (
+    await Promise.all(pedidos.map(async (pedido) => {
+      const buyerIDPedido = String(pedido.BuyerID).trim();
+      const idCompradorDatos = String(datosCombinados.Datos.Id_Comprador).trim();
 
-    if (buyerIDPedido !== idCompradorDatos) {
-      enviarCorreoAlerta(buyerIDPedido); //ID no coincide
-      return false;
-    }
+      if (buyerIDPedido !== idCompradorDatos) {
+        await enviarCorreoAlerta(buyerIDPedido); // ✅ Se usa await aquí
+        return null; // Excluir este pedido
+      }
 
-    return true;
-  });
+      return pedido; // Incluir este pedido
+    }))
+  ).filter(p => p !== null); // Limpiamos los que no coinciden
 
   if (pedidosCoincidentes.length === 0) {
     console.log(" Ningún pedido coincide con el ID de comprador.");
@@ -156,7 +156,4 @@ async function createOrder() {
   return true;
 }
 
-
 module.exports = { obtenerPedidos, createOrder };
-
-

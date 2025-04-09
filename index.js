@@ -1,6 +1,6 @@
 const { obtenerClientes,} = require('./customer');//obtenerDatos } = require('./customer');
 const { obtenerPedidos, createOrder, } = require('./orders');
-const {sendmail} =require('./email');
+const {Sendmail} =require('./email');
 const { obtenerTokenComprador, obtenerTokenVendedor } = require('./token');
 
 async function ejecutar() {
@@ -22,7 +22,7 @@ async function ejecutar() {
     //await obtenerDatos();
    
     console.log("Obteniendo email...");
-    await sendmail(); 
+    await Sendmail(); 
 
   } catch (error) {
     console.error("Error en la ejecución:", error.message);
