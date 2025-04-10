@@ -1,7 +1,7 @@
 const axios = require("axios");
 const shell = require('shelljs');
-const fs = require("fs");
-const path = require("path");
+//const fs = require("fs");
+//const path = require("path");
 const { obtenerTokenVendedor } = require("./token"); 
 const { obtenerDatos } = require("./customer");
 const { Sendmail } = require("./email");
@@ -95,7 +95,7 @@ async function enviarCorreoAlerta(buyerID) {
   const mensajeHTML = `<p><strong>Alerta:</strong> Se detectó un BuyerID no coincidente.</p><p>BuyerID: <b>${buyerID}</b></p>`;
   const destinatario = process.env.ALERTA_EMAIL || "nmunoz@vigfor.cl";
 
-  await mailer. send365Email(destinatario, asunto, mensajeHTML, mensajeTexto);
+  await mailer.send365Email(destinatario, asunto, mensajeHTML, mensajeTexto);
 }
 
 async function createOrder() {

@@ -1,16 +1,23 @@
-const nodemailer = require('nodemailer'); // --save agregar 
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-class Sendmail {
+class SendMail {
     async send365Email(to, subject, html, text, attachments = [], cc = "", bcc = "") {
         try {
-            let from = process.env.MAIL_FROM_ADDRESS;
-            let mailTransport = nodemailer.createTransport({
+            const from = process.env.MAIL_FROM_ADDRESS;
+            const mailTransport = nodemailer.createTransport({
                 host: process.env.MAIL_HOST,
                 port: process.env.MAIL_PORT,
-                auth: { user: process.env.MAIL_FROM_ADDRESS, pass: process.env.MAIL_PASSWORD },
+                auth: { 
+                    user: process.env.MAIL_FROM_ADDRESS, 
+                    pass: process.env.MAIL_PASSWORD 
+                },
                 secureConnection: true,
-                tls: { rejectUnauthorized: false, ciphers: 'SSLv3' }
+                tls: { 
+                        ciphers: 'SSLv3',
+                        rejectUnauthorized: false
+
+                 }
             });
 
             await mailTransport.sendMail({
@@ -20,7 +27,7 @@ class Sendmail {
                 bcc: bcc,
                 replyTo: from,
                 subject: subject,
-                html, 
+                html: html,
                 text: text,
                 attachments: attachments
             });
@@ -28,13 +35,17 @@ class Sendmail {
             console.error(`send365Email: An error occurred: `, err);
         }
     }
+
     async sendEmail(to, subject, html, text, attachments = [], cc = "", bcc = "") {
         try {
-            let from = process.env.MAIL_FROM_ADDRESS;
-            let mailTransport = nodemailer.createTransport({
+            const from = process.env.MAIL_FROM_ADDRESS;
+            const mailTransport = nodemailer.createTransport({
                 host: process.env.MAIL_HOST,
                 port: process.env.MAIL_PORT,
-                auth: { user: process.env.MAIL_FROM_ADDRESS, pass: process.env.MAIL_PASSWORD },
+                auth: { 
+                    user: process.env.MAIL_FROM_ADDRESS, 
+                    pass: process.env.MAIL_PASSWORD 
+                },
                 secure: true,
                 tls: { rejectUnauthorized: false }
             });
@@ -46,14 +57,14 @@ class Sendmail {
                 bcc: bcc,
                 replyTo: from,
                 subject: subject,
-                html,
+                html: html,
                 text: text,
                 attachments: attachments
             });
         } catch (err) { 
-            console.error(`SendMail: An error occurred: `, err);
+            console.error(`sendEmail: An error occurred: `, err);
         }
     }
 }
 
-module.exports = { Sendmail};
+module.exports = SendMail;
