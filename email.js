@@ -67,4 +67,7 @@ class SendMail {
     }
 }
 
-module.exports = SendMail;
+module.exports = new SendMail();
+
+
+
