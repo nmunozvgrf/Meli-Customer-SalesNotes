@@ -124,7 +124,7 @@ async function createOrder() {
 
   const idCompradorNormalizado = String(datosCombinados.Datos.Id_Comprador).trim().toLowerCase();
 
-  const pedidosPorBuyerID = {}; // 👈 Agrupamos por BuyerID
+  const pedidosPorBuyerID = {}; //  Agrupar por BuyerID
   pedidos.forEach(pedido => {
     const buyerID = String(pedido.BuyerID).trim().toLowerCase();
     if (!pedidosPorBuyerID[buyerID]) {
@@ -139,9 +139,8 @@ async function createOrder() {
     const pedidosDeEsteBuyer = pedidosPorBuyerID[buyerID];
 
     if (buyerID !== idCompradorNormalizado) {
-      console.log(`❌ BuyerID no coincide: [${buyerID}] vs [${idCompradorNormalizado}]`);
-      await enviarCorreoAlerta(buyerID); // 👈 Solo un correo por buyerID
-      continue; // 👈 No se procesan estos pedidos
+      await enviarCorreoAlerta(buyerID);
+      continue;
     }
 
     pedidosCoincidentes.push(...pedidosDeEsteBuyer);
