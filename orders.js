@@ -99,7 +99,7 @@ async function enviarCorreoAlerta(buyerID) {
   const asunto = `📦 Mercado Libre - Cliente de la Orden (${process.env.AMBIENTE})`;
 
   const body_mail = `
-    <p><strong>Alerta:</strong> El BuyerID recibido <b>${buyerID}</b> desde Mercado Libre no coincide con el registrado en SAP.</p>
+    <p><strong>Alerta:</strong> El BuyerID recibido <b>${buyerID}</b> desde Mercado Libre no coincide.</p>
     <p>Por esta razón <b>NO se puede crear la orden de venta</b> correspondiente.</p>
   `;
   const texto_plano = `BuyerID no coincide (${buyerID}) y no se puede crear la orden de venta.`;
@@ -122,23 +122,33 @@ async function createOrder() {
     return false;
   }
 
-  // Usamos Promise.all con map para que puedas usar async/await dentro del filtro
-  const pedidosCoincidentes = (
-    await Promise.all(pedidos.map(async (pedido) => {
-      const buyerIDPedido = String(pedido.BuyerID).trim();
-      const idCompradorDatos = String(datosCombinados.Datos.Id_Comprador).trim();
+  const idCompradorNormalizado = String(datosCombinados.Datos.Id_Comprador).trim().toLowerCase();
 
-      if (buyerIDPedido !== idCompradorDatos) {
-        await enviarCorreoAlerta(buyerIDPedido);
-        return null; 
-      }
+  const pedidosPorBuyerID = {}; // 👈 Agrupamos por BuyerID
+  pedidos.forEach(pedido => {
+    const buyerID = String(pedido.BuyerID).trim().toLowerCase();
+    if (!pedidosPorBuyerID[buyerID]) {
+      pedidosPorBuyerID[buyerID] = [];
+    }
+    pedidosPorBuyerID[buyerID].push(pedido);
+  });
 
-      return pedido;
-    }))
-  ).filter(p => p !== null); 
+  const pedidosCoincidentes = [];
+
+  for (const buyerID in pedidosPorBuyerID) {
+    const pedidosDeEsteBuyer = pedidosPorBuyerID[buyerID];
+
+    if (buyerID !== idCompradorNormalizado) {
+      console.log(`❌ BuyerID no coincide: [${buyerID}] vs [${idCompradorNormalizado}]`);
+      await enviarCorreoAlerta(buyerID); // 👈 Solo un correo por buyerID
+      continue; // 👈 No se procesan estos pedidos
+    }
+
+    pedidosCoincidentes.push(...pedidosDeEsteBuyer);
+  }
 
   if (pedidosCoincidentes.length === 0) {
-    console.log(" Ningún pedido coincide con el ID de comprador.");
+    console.log("Ningún pedido coincide con el ID de comprador.");
     return false;
   }
 
@@ -156,15 +166,16 @@ async function createOrder() {
     let salidaCrear = shell.exec(comandoCrear, { silent: true });
     if (!salidaCrear || salidaCrear.code !== 0) {
       console.error("Error al crear la orden.");
-      console.error(" Salida:", salidaCrear.stderr || salidaCrear.stdout);
+      console.error("Salida:", salidaCrear.stderr || salidaCrear.stdout);
       continue;
     }
 
-    console.log(`Nota de venta para la orden ${numeroOrden} creada exitosamente.`);
+    console.log(`✅ Nota de venta para la orden ${numeroOrden} creada exitosamente.`);
   }
 
   return true;
 }
+
 
 //Exportar a otros archivos
 module.exports = { obtenerPedidos, createOrder };
