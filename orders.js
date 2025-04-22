@@ -169,7 +169,7 @@ async function createOrder() {
       continue;
     }
 
-    console.log(`✅ Nota de venta para la orden ${numeroOrden} creada exitosamente.`);
+    console.log(`Nota de venta para la orden ${numeroOrden} creada exitosamente.`);
   }
 
   return true;
