@@ -96,7 +96,7 @@ async function obtenerPedidos() {
 //Enviar un correo electronico si los ID de Compra NO coincide
 async function enviarCorreoAlerta(buyerID) {
   const destinatario = process.env.ALERTA_EMAIL || "nmunoz@vigfor.cl";
-  const asunto = `📦 Mercado Libre - Cliente de la Orden (${process.env.AMBIENTE})`;
+  const asunto = `📦 Mercado Libre - Cliente de la Orden`; //(${process.env.AMBIENTE})
 
   const body_mail = `
     <p><strong>Alerta:</strong> El BuyerID recibido <b>${buyerID}</b> desde Mercado Libre no coincide.</p>
