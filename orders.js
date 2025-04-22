@@ -24,25 +24,27 @@ const nuloCero = 'nullnull0';
 const nullZero = 'nullnull00null';
 
 //Coloca un %20 cuando hay espacio
-function changeText(texto) {
+function changeText(texto, isSku = false) {
   if (!texto) return "Sin Datos";
 
   texto = texto.toUpperCase().replace(/ /g, "%20");
 
-  // Definir longitudes de los segmentos
-  const segmentos = [7, 8, 5, 3];
-  const resultado = [];
+  if (isSku) {
+    // Reemplaza espacios ya lo hicimos arriba, ahora validamos longitud
+    if (texto.length < 23) {
+      // Rellenar con %20 hasta alcanzar 23 caracteres
+      while (texto.length < 23) {
+        texto += "%20";
+      }
+    }
 
-  let index = 0;
-  for (let i = 0; i < segmentos.length; i++) {
-    const longitud = segmentos[i];
-    const parte = texto.slice(index, index + longitud);
-    resultado.push(parte.padEnd(longitud, ' '));
-    index += longitud;
+    // Si se pasa de 23 caracteres, cortar
+    texto = texto.slice(0, 23);
   }
 
-  return resultado.join('');
+  return texto;
 }
+
 
 
 //Generador de muenros de la orden
