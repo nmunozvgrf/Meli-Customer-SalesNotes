@@ -26,8 +26,24 @@ const nullZero = 'nullnull00null';
 //Coloca un %20 cuando hay espacio
 function changeText(texto) {
   if (!texto) return "Sin Datos";
-  return texto.toUpperCase().replace(/ /g, "%20");
+
+  texto = texto.toUpperCase().replace(/ /g, "%20");
+
+  // Definir longitudes de los segmentos
+  const segmentos = [7, 8, 5, 3];
+  const resultado = [];
+
+  let index = 0;
+  for (let i = 0; i < segmentos.length; i++) {
+    const longitud = segmentos[i];
+    const parte = texto.slice(index, index + longitud);
+    resultado.push(parte.padEnd(longitud, ' '));
+    index += longitud;
+  }
+
+  return resultado.join('');
 }
+
 
 //Generador de muenros de la orden
 async function getNumber() {
