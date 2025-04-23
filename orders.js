@@ -24,12 +24,12 @@ const nuloCero = 'nullnull0';
 const nullZero = 'nullnull00null';
 
 //Coloca un %20 cuando hay espacio
-/*function changeText(texto){
+function changeText(texto){
   if (!texto) return "Sin Datos";
   return texto.replace(/ /g, "%20");
-}*/
+}
 
-function changeTextTo23Segmentado(texto) {
+/*function changeTextTo23Segmentado(texto) {
   if (!texto) texto = "";
 
   // Reemplaza espacios reales por %20
@@ -83,7 +83,7 @@ function changeTextTo23Segmentado(texto) {
 
   // Unimos todos los segmentos en uno solo, separados o no, según se necesite
   return segmentos.join(""); // Puedes hacer join con "-" si quieres verlos separados
-}
+}*/
 
 
 
