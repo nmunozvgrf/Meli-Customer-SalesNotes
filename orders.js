@@ -27,25 +27,37 @@ const nullZero = 'nullnull00null';
 function changeText(texto, isSku = false) {
   if (!texto) return "Sin Datos";
 
+  // Convertir a mayúsculas y reemplazar espacios por %20
   texto = texto.toUpperCase().replace(/ /g, "%20");
 
   if (isSku) {
-    // Reemplaza espacios ya lo hicimos arriba, ahora validamos longitud
-    if (texto.length < 23) {
-      // Rellenar con %20 hasta alcanzar 23 caracteres
-      while (texto.length < 23) {
-        texto += "%20";
+    // Contar caracteres virtuales (%20 como 1, todo lo demás como 1)
+    let virtualLength = 0;
+    let result = '';
+    for (let i = 0; i < texto.length && virtualLength < 23; ) {
+      if (texto.slice(i, i + 3) === "%20") {
+        if (virtualLength + 1 > 23) break;
+        result += "%20";
+        i += 3;
+        virtualLength += 1;
+      } else {
+        result += texto[i];
+        i += 1;
+        virtualLength += 1;
       }
     }
 
-    // Si se pasa de 23 caracteres, cortar
-    texto = texto.slice(0, 23);
+    // Rellenar con %20 si es más corto
+    while (virtualLength < 23) {
+      result += "%20";
+      virtualLength += 1;
+    }
+
+    return result;
   }
 
   return texto;
 }
-
-
 
 //Generador de muenros de la orden
 async function getNumber() {
