@@ -24,10 +24,33 @@ const nuloCero = 'nullnull0';
 const nullZero = 'nullnull00null';
 
 //Coloca un %20 cuando hay espacio
-function changeText(texto){
+/*function changeText(texto){
   if (!texto) return "Sin Datos";
   return texto.replace(/ /g, "%20");
+}*/
+
+function changeTextTo23(texto) {
+  if (!texto) texto = "";
+
+  // Reemplazar espacios reales por %20
+  let textoCodificado = texto.replace(/ /g, "%20");
+
+  // Función para contar "caracteres lógicos", donde %20 = 1 carácter
+  const contarCaracteresLogicos = (str) => {
+    return str.split(/(%20)/).reduce((acc, part) => {
+      return acc + (part === "%20" ? 1 : part.length);
+    }, 0);
+  };
+
+  // Mientras tenga menos de 23 caracteres lógicos, agregar más %20
+  while (contarCaracteresLogicos(textoCodificado) < 23) {
+    textoCodificado += "%20";
+  }
+
+  return textoCodificado;
 }
+
+
 
 //Generador de muenros de la orden
 async function getNumber() {
@@ -80,7 +103,7 @@ async function obtenerPedidos() {
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
         Hora,
-        Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
+        Sku: changeTextTo23(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
         BuyerID: buyerID,  
       };
