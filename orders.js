@@ -24,31 +24,66 @@ const nuloCero = 'nullnull0';
 const nullZero = 'nullnull00null';
 
 //Coloca un %20 cuando hay espacio
-function changeText(texto){
+/*function changeText(texto){
   if (!texto) return "Sin Datos";
   return texto.replace(/ /g, "%20");
-}
+}*/
 
-/*function changeTextTo23(texto) {
+function changeTextTo23Segmentado(texto) {
   if (!texto) texto = "";
 
-  // Reemplazar espacios reales por %20
+  // Reemplaza espacios reales por %20
   let textoCodificado = texto.replace(/ /g, "%20");
 
-  // Función para contar "caracteres lógicos", donde %20 = 1 carácter
+  // Contador de caracteres lógicos (%20 cuenta como 1)
   const contarCaracteresLogicos = (str) => {
-    return str.split(/(%20)/).reduce((acc, part) => {
-      return acc + (part === "%20" ? 1 : part.length);
-    }, 0);
+    return str.split(/(%20)/).reduce((acc, part) => acc + (part === "%20" ? 1 : part.length), 0);
   };
 
-  // Mientras tenga menos de 23 caracteres lógicos, agregar más %20
+  // Rellenar con %20 hasta llegar a 23 caracteres lógicos
   while (contarCaracteresLogicos(textoCodificado) < 23) {
     textoCodificado += "%20";
   }
 
-  return textoCodificado;
-}*/
+  // Cortar si hay más de 23 caracteres lógicos
+  const partes = textoCodificado.split(/(%20)/);
+  let resultado = "";
+  let cuenta = 0;
+
+  for (const parte of partes) {
+    const longitud = parte === "%20" ? 1 : parte.length;
+    if (cuenta + longitud > 23) break;
+    resultado += parte;
+    cuenta += longitud;
+  }
+
+  // Ya tenemos exactamente 23 caracteres lógicos en `resultado`
+  // Ahora vamos a segmentarlo en las 4 partes deseadas
+
+  const segmentos = [];
+  const longitudes = [7, 8, 5, 3];
+  let acumulado = 0;
+
+  for (const len of longitudes) {
+    let segmento = "";
+    let actualLogico = 0;
+
+    while (actualLogico < len && acumulado < resultado.length) {
+      const siguiente = resultado.slice(acumulado).startsWith("%20") ? "%20" : resultado[acumulado];
+      const unidad = siguiente === "%20" ? "%20" : siguiente;
+      const incremento = unidad === "%20" ? 3 : 1;
+
+      segmento += resultado.slice(acumulado, acumulado + incremento);
+      acumulado += incremento;
+      actualLogico += 1;
+    }
+
+    segmentos.push(segmento);
+  }
+
+  // Unimos todos los segmentos en uno solo, separados o no, según se necesite
+  return segmentos.join(""); // Puedes hacer join con "-" si quieres verlos separados
+}
 
 
 
@@ -103,7 +138,7 @@ async function obtenerPedidos() {
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
         Hora,
-        Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
+        Sku: changeTextTo23Segmentado(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
         BuyerID: buyerID,  
       };
