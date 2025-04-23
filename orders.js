@@ -24,39 +24,9 @@ const nuloCero = 'nullnull0';
 const nullZero = 'nullnull00null';
 
 //Coloca un %20 cuando hay espacio
-function changeText(texto, isSku = false) {
+function changeText(texto){
   if (!texto) return "Sin Datos";
-
-  // Convertir a mayúsculas y reemplazar espacios por %20
-  texto = texto.toUpperCase().replace(/ /g, "%20");
-
-  if (isSku) {
-    // Contar caracteres virtuales (%20 como 1, todo lo demás como 1)
-    let virtualLength = 0;
-    let result = '';
-    for (let i = 0; i < texto.length && virtualLength < 23; ) {
-      if (texto.slice(i, i + 3) === "%20") {
-        if (virtualLength + 1 > 23) break;
-        result += "%20";
-        i += 3;
-        virtualLength += 1;
-      } else {
-        result += texto[i];
-        i += 1;
-        virtualLength += 1;
-      }
-    }
-
-    // Rellenar con %20 si es más corto
-    while (virtualLength < 23) {
-      result += "%20";
-      virtualLength += 1;
-    }
-
-    return result;
-  }
-
-  return texto;
+  return texto.replace(/ /g, "%20");
 }
 
 //Generador de muenros de la orden
