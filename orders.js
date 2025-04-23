@@ -138,7 +138,7 @@ async function obtenerPedidos() {
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
         Hora,
-        Sku: changeTextTo23Segmentado(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
+        Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
         BuyerID: buyerID,  
       };
