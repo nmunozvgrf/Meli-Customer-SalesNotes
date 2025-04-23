@@ -24,12 +24,12 @@ const nuloCero = 'nullnull0';
 const nullZero = 'nullnull00null';
 
 //Coloca un %20 cuando hay espacio
-/*function changeText(texto){
+function changeText(texto){
   if (!texto) return "Sin Datos";
   return texto.replace(/ /g, "%20");
-}*/
+}
 
-function changeTextTo23(texto) {
+/*function changeTextTo23(texto) {
   if (!texto) texto = "";
 
   // Reemplazar espacios reales por %20
@@ -48,7 +48,7 @@ function changeTextTo23(texto) {
   }
 
   return textoCodificado;
-}
+}*/
 
 
 
@@ -103,7 +103,7 @@ async function obtenerPedidos() {
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
         Hora,
-        Sku: changeTextTo23(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
+        Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
         Pago: order.paid_amount || "0",
         BuyerID: buyerID,  
       };
