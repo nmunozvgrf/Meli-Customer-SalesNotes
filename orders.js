@@ -7,7 +7,7 @@ const { obtenerDatos } = require("./customer");
 const mailer = require("./email");
 
 
-const URL = "https://api.mercadolibre.com/orders/search?seller=2416034112&status=paid";
+const URL = "https://api.mercadolibre.com/orders/search?seller=2416034348&status=paid";
 
 //Variables que se repiten 
 const nulo = 'null';

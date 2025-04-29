@@ -6,7 +6,7 @@ const SECRET_KEY = 'pNcGkdqdSkv3gXiIRiYzdigAeS0BpSwM';
 const REDIRECT_URI = 'https://dev-mercadolibre.vigfor.cl';
 
 const AUTHORIZATION_CODE_1 = 'TG-67ddbe82489d5c000130a7d0-2256702090'; // Comprador
-const AUTHORIZATION_CODE_2 = 'TG-6811344b70bde300010ff05d-2416034112'; // Vendedor
+const AUTHORIZATION_CODE_2 = 'TG-68114e94c873c000015867c7-2416034348'; // Vendedor
 
 const TOKEN_FILE = './tokens.json';
 
