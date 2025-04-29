@@ -7,7 +7,7 @@ const { obtenerDatos } = require("./customer");
 const mailer = require("./email");
 
 
-const URL = "https://api.mercadolibre.com/orders/search?seller=2415366090&status=paid";
+const URL = "https://api.mercadolibre.com/orders/search?seller=2416034112&status=paid";
 
 //Variables que se repiten 
 const nulo = 'null';
@@ -26,7 +26,8 @@ const nullZero = 'nullnull00null';
 //Coloca un %20 cuando hay espacio
 function changeText(texto){
   if (!texto) return "Sin Datos";
-  return texto.replace(/ /g, "%20");
+  return texto.replace(/ /g, "%20")
+              .replace(/_/g, "%20");
 }
 
 /*function changeTextTo23Segmentado(texto) {
@@ -131,14 +132,18 @@ async function obtenerPedidos() {
       const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
 
       const buyerID = order.buyer.id || 'Sin Id Comprador';
-
+      const skuOriginal = order.order_items?.[0]?.item?.seller_sku || "No Especificado";
+      const skuTransformado = changeText(skuOriginal);
+      
+      //console.log(`SKU original: ${skuOriginal}, SKU transformado: ${skuTransformado}`);
+    
       return {
         N_orden: await getNumber(),
         Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
         Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
         Fecha,
         Hora,
-        Sku: changeText(order.order_items?.[0]?.item?.seller_sku || "No Especificado"),
+        Sku: skuTransformado,
         Pago: order.paid_amount || "0",
         BuyerID: buyerID,  
       };
