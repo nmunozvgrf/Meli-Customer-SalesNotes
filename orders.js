@@ -30,64 +30,6 @@ function changeText(texto){
               .replace(/_/g, "%20");
 }
 
-/*function changeTextTo23Segmentado(texto) {
-  if (!texto) texto = "";
-
-  // Reemplaza espacios reales por %20
-  let textoCodificado = texto.replace(/ /g, "%20");
-
-  // Contador de caracteres lógicos (%20 cuenta como 1)
-  const contarCaracteresLogicos = (str) => {
-    return str.split(/(%20)/).reduce((acc, part) => acc + (part === "%20" ? 1 : part.length), 0);
-  };
-
-  // Rellenar con %20 hasta llegar a 23 caracteres lógicos
-  while (contarCaracteresLogicos(textoCodificado) < 23) {
-    textoCodificado += "%20";
-  }
-
-  // Cortar si hay más de 23 caracteres lógicos
-  const partes = textoCodificado.split(/(%20)/);
-  let resultado = "";
-  let cuenta = 0;
-
-  for (const parte of partes) {
-    const longitud = parte === "%20" ? 1 : parte.length;
-    if (cuenta + longitud > 23) break;
-    resultado += parte;
-    cuenta += longitud;
-  }
-
-  // Ya tenemos exactamente 23 caracteres lógicos en `resultado`
-  // Ahora vamos a segmentarlo en las 4 partes deseadas
-
-  const segmentos = [];
-  const longitudes = [7, 8, 5, 3];
-  let acumulado = 0;
-
-  for (const len of longitudes) {
-    let segmento = "";
-    let actualLogico = 0;
-
-    while (actualLogico < len && acumulado < resultado.length) {
-      const siguiente = resultado.slice(acumulado).startsWith("%20") ? "%20" : resultado[acumulado];
-      const unidad = siguiente === "%20" ? "%20" : siguiente;
-      const incremento = unidad === "%20" ? 3 : 1;
-
-      segmento += resultado.slice(acumulado, acumulado + incremento);
-      acumulado += incremento;
-      actualLogico += 1;
-    }
-
-    segmentos.push(segmento);
-  }
-
-  // Unimos todos los segmentos en uno solo, separados o no, según se necesite
-  return segmentos.join(""); // Puedes hacer join con "-" si quieres verlos separados
-}*/
-
-
-
 //Generador de muenros de la orden
 async function getNumber() {
   try {
@@ -134,7 +76,7 @@ async function obtenerPedidos() {
 
       const nuevosPedidos = await Promise.all(data.results.map(async (order) => {
         const fechaObj = new Date(order.date_created);
-        const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
+        const Fecha = `${fechaObj.getFullYear()}-${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}-${fechaObj.getDate().toString().padStart(2, '0')}`;
         const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
 
         const buyerID = order.buyer.id || 'Sin Id Comprador';
