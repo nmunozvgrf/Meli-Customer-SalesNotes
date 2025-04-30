@@ -121,6 +121,8 @@ async function enviarCorreoAlerta(buyerID) {
 }
 
 //Funcion de crear la nota de venta 
+// ... (todo lo anterior permanece igual)
+
 async function createOrder() {
   const pedidos = await obtenerPedidos();
   const datosCombinados = await obtenerDatos();
@@ -137,7 +139,7 @@ async function createOrder() {
 
   const idCompradorNormalizado = String(datosCombinados.Datos.Id_Comprador).trim().toLowerCase();
 
-  const pedidosPorBuyerID = {}; //  Agrupar por BuyerID
+  const pedidosPorBuyerID = {}; // Agrupar por BuyerID
   pedidos.forEach(pedido => {
     const buyerID = String(pedido.BuyerID).trim().toLowerCase();
     if (!pedidosPorBuyerID[buyerID]) {
@@ -164,9 +166,20 @@ async function createOrder() {
     return false;
   }
 
+  // ✅ BLOQUE NUEVO: Validar y formatear fecha
+  let fechaFormateada = "Fecha inválida";
 
-   const fechaCreacionObj = new Date(datosCombinados.Datos.fecha_Creacion);
-   const fechaFormateada = `${fechaCreacionObj.getFullYear()}${(fechaCreacionObj.getMonth() + 1).toString().padStart(2, '0')}${fechaCreacionObj.getDate().toString().padStart(2, '0')}`;
+  if (datosCombinados.Datos.fecha_Creacion) {
+    const fechaCreacionObj = new Date(datosCombinados.Datos.fecha_Creacion);
+
+    if (!isNaN(fechaCreacionObj.getTime())) {
+      fechaFormateada = `${fechaCreacionObj.getFullYear()}${(fechaCreacionObj.getMonth() + 1).toString().padStart(2, '0')}${fechaCreacionObj.getDate().toString().padStart(2, '0')}`;
+    } else {
+      console.error("⚠️ Formato de fecha no válido:", datosCombinados.Datos.fecha_Creacion);
+    }
+  } else {
+    console.error("⚠️ fecha_Creacion está vacía o no existe");
+  }
 
   for (const pedido of pedidosCoincidentes) {
     const numeroOrden = await getNumber();
@@ -192,6 +205,7 @@ async function createOrder() {
   return true;
 }
 
-
 //Exportar a otros archivos
 module.exports = { obtenerPedidos, createOrder };
+
+
