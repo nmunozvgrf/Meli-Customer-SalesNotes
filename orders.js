@@ -114,40 +114,47 @@ async function getNumber() {
 async function obtenerPedidos() {
   try {
     const accessToken = await obtenerTokenVendedor();
-
-    if (!accessToken) {
-      throw new Error("No se pudo obtener el token de acceso del vendedor.");
-    }
+    if (!accessToken) throw new Error("No se pudo obtener el token.");
 
     const headers = {
-      "Authorization": `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     };
 
-    const { data } = await axios.get(URL, { headers });
+    let pedidos = [];
+    let offset = 0;
+    let total = 0;
 
-    const pedidos = await Promise.all(data.results.map(async (order) => {
-      const fechaObj = new Date(order.date_created);
-      const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
-      const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
+    do {
+      const response = await axios.get(`${URL}&offset=${offset}&limit=50`, { headers });
+      const data = response.data;
 
-      const buyerID = order.buyer.id || 'Sin Id Comprador';
-      const skuOriginal = order.order_items?.[0]?.item?.seller_sku || "No Especificado";
-      const skuTransformado = changeText(skuOriginal);
-      
-      //console.log(`SKU original: ${skuOriginal}, SKU transformado: ${skuTransformado}`);
-    
-      return {
-        N_orden: await getNumber(),
-        Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
-        Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
-        Fecha,
-        Hora,
-        Sku: skuTransformado,
-        Pago: order.paid_amount || "0",
-        BuyerID: buyerID,  
-      };
-    }));
+      total = data.paging.total;
+      offset += data.paging.limit;
+
+      const nuevosPedidos = await Promise.all(data.results.map(async (order) => {
+        const fechaObj = new Date(order.date_created);
+        const Fecha = `${fechaObj.getDate().toString().padStart(2, '0')}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getFullYear()}`;
+        const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
+
+        const buyerID = order.buyer.id || 'Sin Id Comprador';
+        const skuOriginal = order.order_items?.[0]?.item?.seller_sku || "No Especificado";
+        const skuTransformado = changeText(skuOriginal);
+        
+        return {
+          Precio: order.order_items?.[0]?.unit_price || "Sin Precio",
+          Cantidad: order.order_items?.[0]?.quantity || "Sin Cantidad",
+          Fecha,
+          Hora,
+          Sku: skuTransformado,
+          Pago: order.paid_amount || "0",
+          BuyerID: buyerID,  
+        };
+      }));
+
+      pedidos.push(...nuevosPedidos);
+
+    } while (offset < total);
 
     return pedidos;
   } catch (error) {
@@ -155,6 +162,7 @@ async function obtenerPedidos() {
     return [];
   }
 }
+
 
 //Enviar un correo electronico si los ID de Compra NO coincide
 async function enviarCorreoAlerta(buyerID) {
