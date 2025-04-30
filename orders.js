@@ -76,7 +76,7 @@ async function obtenerPedidos() {
 
       const nuevosPedidos = await Promise.all(data.results.map(async (order) => {
         const fechaObj = new Date(order.date_created);
-        const Fecha = `${fechaObj.getFullYear()}-${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}-${fechaObj.getDate().toString().padStart(2, '0')}`;
+        const Fecha = `${fechaObj.getFullYear()}${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}${fechaObj.getDate().toString().padStart(2, '0')}`;
         const Hora = `${fechaObj.getHours().toString().padStart(2, '0')}:${fechaObj.getMinutes().toString().padStart(2, '0')}`;
 
         const buyerID = order.buyer.id || 'Sin Id Comprador';
