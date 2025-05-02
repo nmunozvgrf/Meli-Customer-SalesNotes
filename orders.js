@@ -106,13 +106,13 @@ async function obtenerPedidos() {
 }
 
 
-//Enviar un correo electronico si los ID de Compra NO coincide
+//Enviar un Email si los ID de Compra NO coincide
 async function enviarCorreoAlerta(buyerID) {
   const destinatario = process.env.ALERTA_EMAIL || "nmunoz@vigfor.cl";
   const asunto = `📦 Mercado Libre - Cliente de la Orden`; //(${process.env.AMBIENTE})
 
   const body_mail = `
-    <p><strong>Alerta:</strong> El BuyerID recibido <b>${buyerID}</b> desde Mercado Libre no coincide.</p>
+    <p><strong>⚠️Alerta:</strong> El BuyerID recibido <b>${buyerID}</b> desde Mercado Libre no coincide.</p>
     <p>Por esta razón <b>NO se puede crear la orden de venta</b> correspondiente.</p>
   `;
   const texto_plano = `BuyerID no coincide (${buyerID}) y no se puede crear la orden de venta.`;
@@ -121,8 +121,6 @@ async function enviarCorreoAlerta(buyerID) {
 }
 
 //Funcion de crear la nota de venta 
-// ... (todo lo anterior permanece igual)
-
 async function createOrder() {
   const pedidos = await obtenerPedidos();
   const datosCombinados = await obtenerDatos();
@@ -166,7 +164,7 @@ async function createOrder() {
     return false;
   }
 
-  // ✅ BLOQUE NUEVO: Validar y formatear fecha
+
   let fechaFormateada = "Fecha inválida";
 
   if (datosCombinados.Datos.fecha_Creacion) {
@@ -175,10 +173,10 @@ async function createOrder() {
     if (!isNaN(fechaCreacionObj.getTime())) {
       fechaFormateada = `${fechaCreacionObj.getFullYear()}${(fechaCreacionObj.getMonth() + 1).toString().padStart(2, '0')}${fechaCreacionObj.getDate().toString().padStart(2, '0')}`;
     } else {
-      console.error("⚠️ Formato de fecha no válido:", datosCombinados.Datos.fecha_Creacion);
+      console.error("Formato de fecha no válido:", datosCombinados.Datos.fecha_Creacion);
     }
   } else {
-    console.error("⚠️ fecha_Creacion está vacía o no existe");
+    console.error("fecha_Creacion está vacía o no existe");
   }
 
   for (const pedido of pedidosCoincidentes) {
