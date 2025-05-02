@@ -22,7 +22,12 @@ async function ejecutar() {
     //await obtenerDatos();
    
     console.log("Obteniendo email...");
-    await Sendmail(); 
+    try {
+        const Sendmail = require('./email');
+        Sendmail(); // ❌ Aquí es donde explota
+    } catch (err) {
+        console.error("Error en la ejecución:", err.message);
+    }
 
   } catch (error) {
     console.error("Error en la ejecución:", error.message);
