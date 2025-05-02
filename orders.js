@@ -6,7 +6,6 @@ const { obtenerTokenVendedor } = require("./token");
 const { obtenerDatos } = require("./customer");
 const mailer = require("./email");
 
-
 const URL = "https://api.mercadolibre.com/orders/search?seller=2417067960&status=paid";
 
 //Variables que se repiten 
@@ -118,6 +117,7 @@ async function enviarCorreoAlerta(buyerID) {
   const texto_plano = `BuyerID no coincide (${buyerID}) y no se puede crear la orden de venta.`;
 
   await mailer.send365Email(destinatario, asunto, body_mail, texto_plano);
+
 }
 
 //Funcion de crear la nota de venta 
