@@ -36,7 +36,7 @@ class SendMail {
         }
     }
 
-   /* async sendEmail(to, subject, html, text, attachments = [], cc = "", bcc = "") {
+   async sendEmail(to, subject, html, text, attachments = [], cc = "", bcc = "") {
         try {
             const from = process.env.MAIL_FROM_ADDRESS;
             const mailTransport = nodemailer.createTransport({
@@ -64,7 +64,7 @@ class SendMail {
         } catch (err) { 
             console.error(`sendEmail: An error occurred: `, err);
         }
-    }*/
+    }
 }
 
 module.exports = new SendMail();
