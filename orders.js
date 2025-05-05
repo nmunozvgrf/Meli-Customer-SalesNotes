@@ -168,16 +168,20 @@ async function createOrder() {
   let fechaFormateada = "Fecha inválida";
 
   if (datosCombinados.Datos.fecha_Creacion) {
-    const fechaCreacionObj = new Date(datosCombinados.Datos.fecha_Creacion);
+    const fechaStr = datosCombinados.Datos.fecha_Creacion;
+    const dia = fechaStr.substring(0, 2);
+    const mes = fechaStr.substring(2, 4);
+    const anio = fechaStr.substring(4, 8);
 
-    if (!isNaN(fechaCreacionObj.getTime())) {
-      fechaFormateada = `${fechaCreacionObj.getFullYear()}${(fechaCreacionObj.getMonth() + 1).toString().padStart(2, '0')}${fechaCreacionObj.getDate().toString().padStart(2, '0')}`;
+    if (dia && mes && anio) {
+      fechaFormateada = `${anio}${mes}${dia}`;  // AAAAMMDD
     } else {
-      console.error("Formato de fecha no válido:", datosCombinados.Datos.fecha_Creacion);
+      console.error("Formato de fecha_Creacion inesperado:", fechaStr);
     }
   } else {
     console.error("fecha_Creacion está vacía o no existe");
   }
+
 
   for (const pedido of pedidosCoincidentes) {
     const numeroOrden = await getNumber();
@@ -189,6 +193,7 @@ async function createOrder() {
     const comandoCrear = `sh /data/create_order.sh "${numeroOrden};${fechaFormateada};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${once};${nuloCero};${blanco};${datosCombinados.Datos.hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};${cero};${nullZero}|${numeroOrden};${ceroUno};${pedido.Sku};${sucursal};${pedido.Cantidad};${numeroE};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
 
     console.log("Ejecutando comando:", comandoCrear);
+   
 
     let salidaCrear = shell.exec(comandoCrear, { silent: true });
     if (!salidaCrear || salidaCrear.code !== 0) {
