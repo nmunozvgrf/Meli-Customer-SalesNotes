@@ -22,7 +22,7 @@ async function ejecutar() {
     //await obtenerDatos();
    
     console.log("Obteniendo email...");
-    await Sendmail(); 
+    //await Sendmail(); 
 
   } catch (error) {
     console.error("Error en la ejecución:", error.message);
