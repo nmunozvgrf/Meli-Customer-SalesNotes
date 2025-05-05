@@ -105,7 +105,7 @@ function isValidCustomer(rut) {
   let salidaValidar = shell.exec(comandoValidar, { silent: true });
 
   if (!salidaValidar || salidaValidar.code !== 0) {
-    console.log('Cliente no está registrado: 0.');
+    //console.log('Cliente no está registrado: 0.');
     return 0;
   }
 
