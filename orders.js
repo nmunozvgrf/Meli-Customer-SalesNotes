@@ -163,7 +163,7 @@ async function createOrder() {
     console.log("Ningún pedido coincide con el ID de comprador.");
     return false;
   }
-  
+
   let fechaFormateada = "Fecha inválida";
 
   if (datosCombinados.Datos.fecha_Creacion) {
@@ -191,9 +191,8 @@ async function createOrder() {
 
     const comandoCrear = `sh /data/create_order.sh "${numeroOrden};${fechaFormateada};${datosCombinados.Datos.Rut};${datosCombinados.Datos.Nombre};${datosCombinados.Datos.Direccion};${datosCombinados.Datos.Ciudad};${datosCombinados.Datos.Telefono};${datosCombinados.Datos.Telefono};${datosCombinados.giro};${nulo};${pedido.Pago};${cero};${cero};${pedido.Pago};${uno};${datosCombinados.tipo_Usuario};${once};${datosCombinados.tipo_Usuario};${blanco};${blanco};${once};${nuloCero};${blanco};${datosCombinados.Datos.hora};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${blanco};${datosCombinados.Datos.Email};${nulo};${numeroD};${blanco};${blanco};${numeroE};${ceroUno};${uno};${numeroF};${cero};${nullZero}|${numeroOrden};${ceroUno};${pedido.Sku};${sucursal};${pedido.Cantidad};${numeroE};${cero};${pedido.Fecha};${pedido.Hora};${pedido.Precio}"`;
 
-    console.log("Ejecutando comando:", comandoCrear);
+    //console.log("Ejecutando comando:", comandoCrear);
    
-
     let salidaCrear = shell.exec(comandoCrear, { silent: true });
     if (!salidaCrear || salidaCrear.code !== 0) {
       console.error("Error al crear la orden.");
