@@ -13,11 +13,11 @@ async function ejecutar() {
     const tokenVendedor = await obtenerTokenVendedor();
     //console.log("Token Vendedor obtenido:", tokenVendedor);
 
-    console.log("Obteniendo pedidos...");
+    //console.log("Obteniendo pedidos...");
     //await obtenerPedidos(tokenComprador); 
     await createOrder();
     
-    console.log("Obteniendo clientes...");
+    //console.log("Obteniendo clientes...");
     //await obtenerClientes(tokenVendedor); 
     //await obtenerDatos();
    
