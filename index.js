@@ -14,11 +14,11 @@ async function ejecutar() {
     //console.log("Token Vendedor obtenido:", tokenVendedor);
 
     console.log("Obteniendo pedidos...");
-    await obtenerPedidos(tokenComprador); 
+    //await obtenerPedidos(tokenComprador); 
     await createOrder();
     
     console.log("Obteniendo clientes...");
-    await obtenerClientes(tokenVendedor); 
+    //await obtenerClientes(tokenVendedor); 
     //await obtenerDatos();
    
   } catch (error) {

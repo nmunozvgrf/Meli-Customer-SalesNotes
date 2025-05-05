@@ -34,7 +34,7 @@ function validEmail(email){
 async function obtenerClientes() {
   try {
     const accessToken = await obtenerTokenComprador();
-    const userIdComprador = await obtenerUserIdComprador(); // Obtener el userId 
+    const userIdComprador = await obtenerUserIdComprador(); 
     
     if (!accessToken) {
       console.error("No se pudo obtener el token de acceso del comprador.");
