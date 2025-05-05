@@ -163,8 +163,7 @@ async function createOrder() {
     console.log("Ningún pedido coincide con el ID de comprador.");
     return false;
   }
-
-
+  
   let fechaFormateada = "Fecha inválida";
 
   if (datosCombinados.Datos.fecha_Creacion) {
